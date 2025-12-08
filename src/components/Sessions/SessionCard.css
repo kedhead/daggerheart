@@ -1,0 +1,126 @@
+.session-card {
+  overflow: hidden;
+}
+
+.session-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.session-number {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--hope-color), var(--fear-color));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-weight: 700;
+  font-family: 'Cinzel', serif;
+  color: white;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.session-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-info h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.session-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.session-details {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  margin-top: 1.5rem;
+  animation: slideIn 0.3s ease;
+}
+
+.session-summary,
+.session-highlights,
+.session-dm-notes {
+  margin-bottom: 1.5rem;
+}
+
+.session-summary h4,
+.session-highlights h4,
+.session-dm-notes h4 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.session-summary p {
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.session-highlights ul {
+  list-style: none;
+  padding: 0;
+}
+
+.session-highlights li {
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 2rem;
+}
+
+.session-highlights li::before {
+  content: '•';
+  position: absolute;
+  left: 0.75rem;
+  color: var(--hope-color);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.session-dm-notes {
+  padding: 1rem;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid var(--fear-color);
+  border-radius: 8px;
+}
+
+.session-dm-notes h4 {
+  color: var(--fear-color);
+}
+
+.session-dm-notes p {
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.session-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.session-actions .btn {
+  flex: 1;
+}

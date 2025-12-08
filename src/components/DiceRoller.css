@@ -1,0 +1,217 @@
+.dice-roller {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.dice-roller h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.dice-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.modifier-input {
+  flex: 1;
+}
+
+.modifier-input label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-muted);
+}
+
+.modifier-input input {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.dice-controls .btn {
+  flex: 2;
+}
+
+.roll-result {
+  padding: 1.5rem;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  margin-bottom: 1.5rem;
+  animation: slideIn 0.5s ease;
+}
+
+.roll-result.hope {
+  border-color: var(--hope-color);
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), transparent);
+}
+
+.roll-result.fear {
+  border-color: var(--fear-color);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), transparent);
+}
+
+.dice-display {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.die {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  min-width: 100px;
+}
+
+.hope-die {
+  background: linear-gradient(135deg, var(--hope-color), var(--hope-secondary));
+  color: var(--bg-primary);
+}
+
+.fear-die {
+  background: linear-gradient(135deg, var(--fear-color), var(--fear-secondary));
+  color: white;
+}
+
+.die-value {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'Cinzel', serif;
+}
+
+.die-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.roll-total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.total-value {
+  font-size: 3rem;
+  font-weight: 700;
+  font-family: 'Cinzel', serif;
+  background: linear-gradient(135deg, var(--hope-color), var(--fear-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.outcome-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.outcome-badge.hope {
+  background: linear-gradient(135deg, var(--hope-color), var(--hope-secondary));
+  color: var(--bg-primary);
+}
+
+.outcome-badge.fear {
+  background: linear-gradient(135deg, var(--fear-color), var(--fear-secondary));
+  color: white;
+}
+
+.modifier-display {
+  text-align: center;
+  margin-top: 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.roll-history {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.roll-history h4 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.history-time {
+  color: var(--text-muted);
+  min-width: 80px;
+}
+
+.history-dice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  flex: 1;
+  justify-content: center;
+}
+
+.history-outcome {
+  font-weight: 700;
+  min-width: 40px;
+  text-align: right;
+}
+
+.history-outcome.hope {
+  color: var(--hope-color);
+}
+
+.history-outcome.fear {
+  color: var(--fear-color);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

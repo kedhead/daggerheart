@@ -1,0 +1,249 @@
+:root {
+  /* Background */
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1a1a2e;
+  --bg-tertiary: #16213e;
+
+  /* Text */
+  --text-primary: #e8e6e3;
+  --text-muted: rgba(232, 230, 227, 0.7);
+
+  /* Hope (Player Mode Accent) */
+  --hope-color: #eab308;
+  --hope-secondary: #f59e0b;
+
+  /* Fear (DM Mode Accent) */
+  --fear-color: #8b5cf6;
+  --fear-secondary: #a78bfa;
+
+  /* UI */
+  --danger: #ef4444;
+  --border: rgba(255, 255, 255, 0.1);
+  --card-bg: rgba(0, 0, 0, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Crimson Pro', Georgia, serif;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+button {
+  font-family: 'Crimson Pro', Georgia, serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input, textarea, select {
+  font-family: 'Crimson Pro', Georgia, serif;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Utility classes */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn {
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--hope-color), var(--hope-secondary));
+  color: var(--bg-primary);
+}
+
+.btn-primary.dm-mode {
+  background: linear-gradient(135deg, var(--fear-color), var(--fear-secondary));
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-icon {
+  padding: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.btn-icon:hover {
+  background: var(--card-bg);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select {
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.input-group input:focus,
+.input-group textarea:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: var(--hope-color);
+}
+
+.dm-mode .input-group input:focus,
+.dm-mode .input-group textarea:focus,
+.dm-mode .input-group select:focus {
+  border-color: var(--fear-color);
+}
+
+.input-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+}
+
+.badge-hope {
+  background: linear-gradient(135deg, var(--hope-color), var(--hope-secondary));
+  color: var(--bg-primary);
+  border: none;
+}
+
+.badge-fear {
+  background: linear-gradient(135deg, var(--fear-color), var(--fear-secondary));
+  color: white;
+  border: none;
+}
+
+.badge-danger {
+  background: var(--danger);
+  color: white;
+  border: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease;
+}

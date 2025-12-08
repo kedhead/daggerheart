@@ -1,0 +1,126 @@
+.character-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.form-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+.traits-section h4,
+.slots-section h4 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.traits-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.slots-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.slot-group h4 {
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+}
+
+.slot-toggles {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.slot-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 2px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.slot-toggle:hover {
+  border-color: var(--text-primary);
+}
+
+.slot-toggle.filled.hp {
+  background: var(--hope-color);
+  border-color: var(--hope-color);
+  color: var(--bg-primary);
+}
+
+.slot-toggle.filled.stress {
+  background: var(--fear-color);
+  border-color: var(--fear-color);
+  color: white;
+}
+
+.experiences-form-section h4 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.experience-input-group {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.experience-input-group input {
+  flex: 1;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+}
+
+.experiences-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.experiences-tags .badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.experiences-tags .badge button {
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.experiences-tags .badge button:hover {
+  opacity: 1;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}

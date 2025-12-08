@@ -1,0 +1,9 @@
+.sessions-view {
+  padding: 2rem;
+}
+
+.sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}

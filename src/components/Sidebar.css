@@ -1,0 +1,146 @@
+.sidebar {
+  width: 280px;
+  min-height: 100vh;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar-header {
+  margin-bottom: 2rem;
+}
+
+.sidebar-title {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+  background: linear-gradient(135deg, var(--hope-color), var(--hope-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sidebar.dm-mode .sidebar-title {
+  background: linear-gradient(135deg, var(--fear-color), var(--fear-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sidebar-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding: 0.5rem;
+  background: var(--card-bg);
+  border-radius: 12px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.player-mode .mode-btn.active {
+  background: linear-gradient(135deg, var(--hope-color), var(--hope-secondary));
+  color: var(--bg-primary);
+  border-color: var(--hope-color);
+}
+
+.dm-mode .mode-btn.active {
+  background: linear-gradient(135deg, var(--fear-color), var(--fear-secondary));
+  color: white;
+  border-color: var(--fear-color);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.nav-item {
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  background: var(--card-bg);
+  border-color: var(--border);
+}
+
+.player-mode .nav-item.active {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(245, 158, 11, 0.2));
+  border-color: var(--hope-color);
+  color: var(--hope-color);
+}
+
+.dm-mode .nav-item.active {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(167, 139, 250, 0.2));
+  border-color: var(--fear-color);
+  color: var(--fear-color);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.sidebar-footer p {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-footer a {
+  display: block;
+  color: var(--text-primary);
+  text-decoration: none;
+  padding: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.sidebar-footer a:hover {
+  color: var(--hope-color);
+}
+
+.dm-mode .sidebar-footer a:hover {
+  color: var(--fear-color);
+}

@@ -1,0 +1,218 @@
+.character-card {
+  overflow: hidden;
+}
+
+.character-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.character-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--hope-color), var(--fear-color));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Cinzel', serif;
+  color: white;
+  flex-shrink: 0;
+}
+
+.character-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.character-info h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.character-class {
+  color: var(--hope-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.character-ancestry {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.expand-btn {
+  flex-shrink: 0;
+}
+
+.character-details {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  margin-top: 1.5rem;
+  animation: slideIn 0.3s ease;
+}
+
+.stats-section {
+  margin-bottom: 1.5rem;
+}
+
+.stats-section h4 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+}
+
+.traits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.trait {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+.trait-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.trait-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--hope-color);
+}
+
+.vitals-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.vital h4 {
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+}
+
+.slots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.slot {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.slot.filled.hp {
+  background: var(--hope-color);
+  border-color: var(--hope-color);
+}
+
+.slot.filled.stress {
+  background: var(--fear-color);
+  border-color: var(--fear-color);
+}
+
+.slot.empty {
+  background: transparent;
+}
+
+.combat-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.experiences-section {
+  margin-bottom: 1.5rem;
+}
+
+.experiences-section h4 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+}
+
+.experiences-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.backstory-section,
+.dm-notes-section {
+  margin-bottom: 1.5rem;
+}
+
+.backstory-section h4,
+.dm-notes-section h4 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dm-notes-section {
+  padding: 1rem;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid var(--fear-color);
+  border-radius: 8px;
+}
+
+.dm-notes-section h4 {
+  color: var(--fear-color);
+}
+
+.character-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.character-actions .btn {
+  flex: 1;
+  min-width: fit-content;
+}
