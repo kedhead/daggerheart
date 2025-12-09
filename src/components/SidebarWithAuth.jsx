@@ -13,12 +13,12 @@ export default function SidebarWithAuth({ currentView, setCurrentView, isDM, use
     { id: 'npcs', label: 'NPCs', icon: UsersRound },
     { id: 'timeline', label: 'Timeline', icon: Calendar },
     { id: 'locations', label: 'Locations', icon: Map },
-    { id: 'encounters', label: 'Encounters', icon: Swords },
     { id: 'files', label: 'Maps & Files', icon: FolderUp },
     { id: 'tools', label: 'Tools', icon: Wrench }
   ];
 
   if (isDM) {
+    navItems.splice(7, 0, { id: 'encounters', label: 'Encounters', icon: Swords });
     navItems.push({ id: 'members', label: 'Members', icon: UserCog });
   }
 
