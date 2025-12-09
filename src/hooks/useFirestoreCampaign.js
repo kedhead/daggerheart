@@ -35,9 +35,37 @@ export function useFirestoreCampaign(campaignId) {
 
     const unsubscribe = onSnapshot(
       doc(db, basePath),
-      (doc) => {
-        if (doc.exists()) {
-          setCampaign({ id: doc.id, ...doc.data() });
+      async (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const campaignData = { id: docSnapshot.id, ...docSnapshot.data() };
+
+          // Migrate legacy campaigns without dmId or members
+          if (!campaignData.dmId || !campaignData.members) {
+            try {
+              const updates = {
+                dmId: currentUser.uid,
+                members: {
+                  [currentUser.uid]: {
+                    role: 'dm',
+                    email: currentUser.email,
+                    displayName: currentUser.displayName || 'DM',
+                    joinedAt: serverTimestamp()
+                  }
+                }
+              };
+
+              await updateDoc(docSnapshot.ref, updates);
+              console.log('Migrated legacy campaign to new structure');
+
+              // Update local state with migrated data
+              setCampaign({ ...campaignData, ...updates });
+            } catch (error) {
+              console.error('Error migrating campaign:', error);
+              setCampaign(campaignData);
+            }
+          } else {
+            setCampaign(campaignData);
+          }
         }
         setLoading(false);
       },
@@ -48,7 +76,7 @@ export function useFirestoreCampaign(campaignId) {
     );
 
     return unsubscribe;
-  }, [basePath]);
+  }, [basePath, currentUser]);
 
   // Subscribe to characters
   useEffect(() => {

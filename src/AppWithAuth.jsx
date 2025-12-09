@@ -38,8 +38,11 @@ function CampaignApp() {
   } = useFirestoreCampaign(currentCampaignId);
 
   // Determine if current user is DM based on campaign data
-  const isDM = campaign?.dmId === currentUser?.uid;
-  const userRole = campaign?.members?.[currentUser?.uid]?.role || 'player';
+  // For legacy campaigns without dmId, assume current user is DM
+  const isDM = campaign?.dmId === currentUser?.uid ||
+               (campaign && !campaign.dmId && campaign.createdBy === currentUser?.uid) ||
+               (campaign && !campaign.dmId); // If no dmId at all, assume DM for backwards compatibility
+  const userRole = campaign?.members?.[currentUser?.uid]?.role || 'dm'; // Default to dm for legacy campaigns
 
   const handleSelectCampaign = (campaignId) => {
     setCurrentCampaignId(campaignId);
