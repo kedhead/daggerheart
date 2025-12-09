@@ -9,6 +9,7 @@ import DashboardView from './components/Dashboard/DashboardView';
 import CharactersView from './components/Characters/CharactersView';
 import LoreView from './components/Lore/LoreView';
 import SessionsView from './components/Sessions/SessionsView';
+import FilesView from './components/Files/FilesView';
 import ToolsView from './components/Tools/ToolsView';
 import { useFirestoreCampaign } from './hooks/useFirestoreCampaign';
 import { usePendingInvites } from './hooks/usePendingInvites';
@@ -138,6 +139,8 @@ function CampaignApp() {
             isDM={isDM}
           />
         );
+      case 'files':
+        return <FilesView campaign={campaign} isDM={isDM} />;
       case 'tools':
         return <ToolsView />;
       case 'members':

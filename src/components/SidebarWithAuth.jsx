@@ -1,4 +1,4 @@
-import { Home, Users, BookOpen, ScrollText, Wrench, Crown, User, LogOut, FolderOpen, UserCog } from 'lucide-react';
+import { Home, Users, BookOpen, ScrollText, Wrench, Crown, User, LogOut, FolderOpen, UserCog, FolderUp } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import './Sidebar.css';
 
@@ -10,6 +10,7 @@ export default function SidebarWithAuth({ currentView, setCurrentView, isDM, use
     { id: 'characters', label: 'Characters', icon: Users },
     { id: 'lore', label: 'Lore', icon: BookOpen },
     { id: 'sessions', label: 'Sessions', icon: ScrollText },
+    { id: 'files', label: 'Maps & Files', icon: FolderUp },
     { id: 'tools', label: 'Tools', icon: Wrench }
   ];
 
