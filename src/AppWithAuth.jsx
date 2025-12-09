@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AuthPage from './components/Auth/AuthPage';
 import CampaignSelector from './components/Campaigns/CampaignSelector';
+import CampaignMembers from './components/Campaigns/CampaignMembers';
 import SidebarWithAuth from './components/SidebarWithAuth';
 import DashboardView from './components/Dashboard/DashboardView';
 import CharactersView from './components/Characters/CharactersView';
@@ -17,7 +18,6 @@ function CampaignApp() {
   const [currentCampaignId, setCurrentCampaignId] = useState(
     localStorage.getItem('lastCampaignId') || null
   );
-  const [isDM, setIsDM] = useState(false);
 
   const {
     campaign,
@@ -36,6 +36,10 @@ function CampaignApp() {
     deleteSession,
     loading
   } = useFirestoreCampaign(currentCampaignId);
+
+  // Determine if current user is DM based on campaign data
+  const isDM = campaign?.dmId === currentUser?.uid;
+  const userRole = campaign?.members?.[currentUser?.uid]?.role || 'player';
 
   const handleSelectCampaign = (campaignId) => {
     setCurrentCampaignId(campaignId);
@@ -84,6 +88,7 @@ function CampaignApp() {
             updateCharacter={updateCharacter}
             deleteCharacter={deleteCharacter}
             isDM={isDM}
+            currentUserId={currentUser.uid}
           />
         );
       case 'lore':
@@ -108,6 +113,8 @@ function CampaignApp() {
         );
       case 'tools':
         return <ToolsView />;
+      case 'members':
+        return <CampaignMembers campaign={campaign} currentUserId={currentUser.uid} />;
       default:
         return (
           <DashboardView
@@ -128,7 +135,7 @@ function CampaignApp() {
         currentView={currentView}
         setCurrentView={setCurrentView}
         isDM={isDM}
-        setIsDM={setIsDM}
+        userRole={userRole}
         currentCampaign={campaign}
         onSwitchCampaign={() => setCurrentCampaignId(null)}
       />

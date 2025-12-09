@@ -120,6 +120,8 @@ export function useFirestoreCampaign(campaignId) {
     if (!basePath) return;
     const docRef = await addDoc(collection(db, `${basePath}/characters`), {
       ...character,
+      createdBy: currentUser.uid,
+      createdByName: currentUser.displayName || currentUser.email,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });

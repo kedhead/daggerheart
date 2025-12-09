@@ -1,0 +1,67 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserId() {
+      return request.auth.uid;
+    }
+
+    function getCampaignData(userId, campaignId) {
+      return get(/databases/$(database)/documents/users/$(userId)/campaigns/$(campaignId)).data;
+    }
+
+    function isDM(userId, campaignId) {
+      let campaign = getCampaignData(userId, campaignId);
+      return campaign.dmId == getUserId();
+    }
+
+    function isMember(userId, campaignId) {
+      let campaign = getCampaignData(userId, campaignId);
+      return getUserId() in campaign.members;
+    }
+
+    // User documents
+    match /users/{userId} {
+      allow read: if isAuthenticated() && getUserId() == userId;
+      allow write: if isAuthenticated() && getUserId() == userId;
+
+      // Campaigns
+      match /campaigns/{campaignId} {
+        // Campaign owner can read/write
+        allow read: if isAuthenticated() && (getUserId() == userId || isMember(userId, campaignId));
+        allow create: if isAuthenticated() && getUserId() == userId;
+        allow update: if isAuthenticated() && isDM(userId, campaignId);
+        allow delete: if isAuthenticated() && isDM(userId, campaignId);
+
+        // Characters - Players can create their own, DMs can manage all
+        match /characters/{characterId} {
+          allow read: if isAuthenticated() && isMember(userId, campaignId);
+          allow create: if isAuthenticated() && isMember(userId, campaignId);
+          allow update: if isAuthenticated() && (
+            resource.data.createdBy == getUserId() || isDM(userId, campaignId)
+          );
+          allow delete: if isAuthenticated() && (
+            resource.data.createdBy == getUserId() || isDM(userId, campaignId)
+          );
+        }
+
+        // Lore - Only DM can write, all members can read
+        match /lore/{loreId} {
+          allow read: if isAuthenticated() && isMember(userId, campaignId);
+          allow write: if isAuthenticated() && isDM(userId, campaignId);
+        }
+
+        // Sessions - Only DM can write, all members can read
+        match /sessions/{sessionId} {
+          allow read: if isAuthenticated() && isMember(userId, campaignId);
+          allow write: if isAuthenticated() && isDM(userId, campaignId);
+        }
+      }
+    }
+  }
+}

@@ -148,6 +148,27 @@
   white-space: nowrap;
 }
 
+.user-role-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--card-bg);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.player-mode .user-role-badge {
+  border-left: 3px solid var(--hope-color);
+}
+
+.dm-mode .user-role-badge {
+  border-left: 3px solid var(--fear-color);
+}
+
 .logout-btn {
   width: 100%;
   padding: 0.875rem 1rem;

@@ -52,6 +52,16 @@ export function useCampaigns() {
       {
         name,
         description,
+        createdBy: currentUser.uid,
+        dmId: currentUser.uid, // Creator is always the DM
+        members: {
+          [currentUser.uid]: {
+            role: 'dm',
+            email: currentUser.email,
+            displayName: currentUser.displayName || 'DM',
+            joinedAt: serverTimestamp()
+          }
+        },
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       }

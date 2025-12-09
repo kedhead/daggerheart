@@ -5,7 +5,7 @@ import CharacterFormSimple from './CharacterFormSimple';
 import Modal from '../Modal';
 import './CharactersView.css';
 
-export default function CharactersView({ characters, addCharacter, updateCharacter, deleteCharacter, isDM }) {
+export default function CharactersView({ characters, addCharacter, updateCharacter, deleteCharacter, isDM, currentUserId }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,6 +30,11 @@ export default function CharactersView({ characters, addCharacter, updateCharact
     setEditingCharacter(null);
   };
 
+  // Players can only edit their own characters, DMs can edit all
+  const canEditCharacter = (character) => {
+    return isDM || character.createdBy === currentUserId;
+  };
+
   const filteredCharacters = characters.filter(char =>
     char.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     char.class.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -43,12 +48,10 @@ export default function CharactersView({ characters, addCharacter, updateCharact
           <h2>Characters</h2>
           <p className="view-subtitle">{characters.length} character{characters.length !== 1 ? 's' : ''} in your party</p>
         </div>
-        {isDM && (
-          <button className={`btn btn-primary ${isDM ? 'dm-mode' : ''}`} onClick={handleAdd}>
-            <Plus size={20} />
-            Add Character
-          </button>
-        )}
+        <button className={`btn btn-primary ${isDM ? 'dm-mode' : ''}`} onClick={handleAdd}>
+          <Plus size={20} />
+          Add Character
+        </button>
       </div>
 
       {characters.length > 0 && (
@@ -82,6 +85,7 @@ export default function CharactersView({ characters, addCharacter, updateCharact
               onEdit={() => handleEdit(character)}
               onDelete={() => deleteCharacter(character.id)}
               isDM={isDM}
+              canEdit={canEditCharacter(character)}
             />
           ))}
         </div>

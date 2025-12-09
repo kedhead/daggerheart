@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronDown, ChevronRight, Edit3, Trash2, ExternalLink, EyeOff } from 'lucide-react';
 import './CharacterCard.css';
 
-export default function CharacterCardSimple({ character, onEdit, onDelete, isDM }) {
+export default function CharacterCardSimple({ character, onEdit, onDelete, isDM, canEdit }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -61,7 +61,7 @@ export default function CharacterCardSimple({ character, onEdit, onDelete, isDM 
             </div>
           )}
 
-          {isDM && (
+          {canEdit && (
             <div className="character-actions">
               <button className="btn btn-secondary" onClick={onEdit}>
                 <Edit3 size={16} />

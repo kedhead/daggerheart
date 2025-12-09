@@ -1,8 +1,8 @@
-import { Home, Users, BookOpen, ScrollText, Wrench, Crown, User, LogOut, FolderOpen } from 'lucide-react';
+import { Home, Users, BookOpen, ScrollText, Wrench, Crown, User, LogOut, FolderOpen, UserCog } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import './Sidebar.css';
 
-export default function SidebarWithAuth({ currentView, setCurrentView, isDM, setIsDM, currentCampaign, onSwitchCampaign }) {
+export default function SidebarWithAuth({ currentView, setCurrentView, isDM, userRole, currentCampaign, onSwitchCampaign }) {
   const { logout } = useAuth();
 
   const navItems = [
@@ -12,6 +12,10 @@ export default function SidebarWithAuth({ currentView, setCurrentView, isDM, set
     { id: 'sessions', label: 'Sessions', icon: ScrollText },
     { id: 'tools', label: 'Tools', icon: Wrench }
   ];
+
+  if (isDM) {
+    navItems.push({ id: 'members', label: 'Members', icon: UserCog });
+  }
 
   const handleLogout = async () => {
     try {
@@ -34,25 +38,21 @@ export default function SidebarWithAuth({ currentView, setCurrentView, isDM, set
             <FolderOpen size={16} />
             <span className="campaign-name">{currentCampaign.name}</span>
           </button>
+          <div className="user-role-badge">
+            {isDM ? (
+              <>
+                <Crown size={16} />
+                <span>Dungeon Master</span>
+              </>
+            ) : (
+              <>
+                <User size={16} />
+                <span>Player</span>
+              </>
+            )}
+          </div>
         </div>
       )}
-
-      <div className="mode-toggle">
-        <button
-          className={`mode-btn ${!isDM ? 'active' : ''}`}
-          onClick={() => setIsDM(false)}
-        >
-          <User size={18} />
-          Player
-        </button>
-        <button
-          className={`mode-btn ${isDM ? 'active' : ''}`}
-          onClick={() => setIsDM(true)}
-        >
-          <Crown size={18} />
-          DM
-        </button>
-      </div>
 
       <nav className="sidebar-nav">
         {navItems.map(item => {
