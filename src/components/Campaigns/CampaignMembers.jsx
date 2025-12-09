@@ -78,6 +78,15 @@ export default function CampaignMembers({ campaign, currentUserId }) {
         <form onSubmit={handleInvite} className="invite-form">
           <h4>Invite Player</h4>
           {error && <div className="error-message">{error}</div>}
+
+          <div className="invite-notice">
+            <Mail size={20} />
+            <div>
+              <strong>How invitations work:</strong>
+              <p>Enter the player's email address below. You'll need to send them the campaign link manually (copy the URL from your browser). When they sign up or log in with the invited email address, they'll automatically be added to this campaign as a player.</p>
+            </div>
+          </div>
+
           <div className="input-group">
             <input
               type="email"
@@ -93,11 +102,12 @@ export default function CampaignMembers({ campaign, currentUserId }) {
               disabled={inviting}
             >
               <UserPlus size={18} />
-              {inviting ? 'Inviting...' : 'Invite'}
+              {inviting ? 'Inviting...' : 'Add to Whitelist'}
             </button>
           </div>
           <p className="invite-instructions">
-            Players will be able to join this campaign by signing up or logging in with this email address.
+            <strong>Campaign URL to share:</strong><br/>
+            {window.location.origin}
           </p>
         </form>
       )}
