@@ -1,0 +1,89 @@
+import { useState } from 'react';
+import { ChevronDown, ChevronRight, Edit3, Trash2, MapPin } from 'lucide-react';
+import './LocationsView.css';
+
+export default function LocationCard({ location, onEdit, onDelete, isDM }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const getTypeColor = (type) => {
+    const typeColors = {
+      city: 'location-city',
+      town: 'location-town',
+      village: 'location-village',
+      dungeon: 'location-dungeon',
+      wilderness: 'location-wilderness',
+      landmark: 'location-landmark',
+      other: 'location-other'
+    };
+    return typeColors[type] || 'location-other';
+  };
+
+  return (
+    <div className="location-card card">
+      <div className="location-header" onClick={() => setIsExpanded(!isExpanded)}>
+        <div className="location-icon">
+          <MapPin size={24} />
+        </div>
+        <div className="location-info">
+          <h3>{location.name}</h3>
+          {location.type && (
+            <span className={`location-type-badge ${getTypeColor(location.type)}`}>
+              {location.type}
+            </span>
+          )}
+          {location.region && (
+            <p className="location-region">{location.region}</p>
+          )}
+        </div>
+        <button className="btn btn-icon expand-btn">
+          {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+        </button>
+      </div>
+
+      {isExpanded && (
+        <div className="location-details">
+          {location.description && (
+            <div className="location-section">
+              <h4>Description</h4>
+              <p>{location.description}</p>
+            </div>
+          )}
+
+          {location.notableFeatures && (
+            <div className="location-section">
+              <h4>Notable Features</h4>
+              <p>{location.notableFeatures}</p>
+            </div>
+          )}
+
+          {location.inhabitants && (
+            <div className="location-section">
+              <h4>Inhabitants</h4>
+              <p>{location.inhabitants}</p>
+            </div>
+          )}
+
+          {location.secrets && (
+            <div className="location-section">
+              <h4>Secrets</h4>
+              <p>{location.secrets}</p>
+            </div>
+          )}
+
+          {isDM && (
+            <div className="location-actions">
+              <button className="btn btn-secondary" onClick={onEdit}>
+                <Edit3 size={16} />
+                Edit
+              </button>
+              <button className="btn btn-danger" onClick={onDelete}>
+                <Trash2 size={16} />
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

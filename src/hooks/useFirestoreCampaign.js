@@ -19,6 +19,10 @@ export function useFirestoreCampaign(campaignId) {
   const [characters, setCharacters] = useState([]);
   const [lore, setLore] = useState([]);
   const [sessions, setSessions] = useState([]);
+  const [npcs, setNpcs] = useState([]);
+  const [timelineEvents, setTimelineEvents] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [encounters, setEncounters] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Base path for shared campaign
@@ -132,6 +136,78 @@ export function useFirestoreCampaign(campaignId) {
     return unsubscribe;
   }, [basePath]);
 
+  // Subscribe to NPCs
+  useEffect(() => {
+    if (!basePath) return;
+
+    const unsubscribe = onSnapshot(
+      collection(db, `${basePath}/npcs`),
+      (snapshot) => {
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setNpcs(data);
+      }
+    );
+
+    return unsubscribe;
+  }, [basePath]);
+
+  // Subscribe to Timeline Events
+  useEffect(() => {
+    if (!basePath) return;
+
+    const unsubscribe = onSnapshot(
+      collection(db, `${basePath}/timelineEvents`),
+      (snapshot) => {
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setTimelineEvents(data);
+      }
+    );
+
+    return unsubscribe;
+  }, [basePath]);
+
+  // Subscribe to Locations
+  useEffect(() => {
+    if (!basePath) return;
+
+    const unsubscribe = onSnapshot(
+      collection(db, `${basePath}/locations`),
+      (snapshot) => {
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setLocations(data);
+      }
+    );
+
+    return unsubscribe;
+  }, [basePath]);
+
+  // Subscribe to Encounters
+  useEffect(() => {
+    if (!basePath) return;
+
+    const unsubscribe = onSnapshot(
+      collection(db, `${basePath}/encounters`),
+      (snapshot) => {
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setEncounters(data);
+      }
+    );
+
+    return unsubscribe;
+  }, [basePath]);
+
   // Campaign methods
   const updateCampaign = async (updates) => {
     if (!basePath) return;
@@ -218,6 +294,102 @@ export function useFirestoreCampaign(campaignId) {
     await deleteDoc(doc(db, `${basePath}/sessions`, id));
   };
 
+  // NPC methods
+  const addNPC = async (npcData) => {
+    if (!basePath) return;
+    const docRef = await addDoc(collection(db, `${basePath}/npcs`), {
+      ...npcData,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    return { id: docRef.id, ...npcData };
+  };
+
+  const updateNPC = async (id, updates) => {
+    if (!basePath) return;
+    await updateDoc(doc(db, `${basePath}/npcs`, id), {
+      ...updates,
+      updatedAt: serverTimestamp()
+    });
+  };
+
+  const deleteNPC = async (id) => {
+    if (!basePath) return;
+    await deleteDoc(doc(db, `${basePath}/npcs`, id));
+  };
+
+  // Timeline Event methods
+  const addTimelineEvent = async (eventData) => {
+    if (!basePath) return;
+    const docRef = await addDoc(collection(db, `${basePath}/timelineEvents`), {
+      ...eventData,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    return { id: docRef.id, ...eventData };
+  };
+
+  const updateTimelineEvent = async (id, updates) => {
+    if (!basePath) return;
+    await updateDoc(doc(db, `${basePath}/timelineEvents`, id), {
+      ...updates,
+      updatedAt: serverTimestamp()
+    });
+  };
+
+  const deleteTimelineEvent = async (id) => {
+    if (!basePath) return;
+    await deleteDoc(doc(db, `${basePath}/timelineEvents`, id));
+  };
+
+  // Location methods
+  const addLocation = async (locationData) => {
+    if (!basePath) return;
+    const docRef = await addDoc(collection(db, `${basePath}/locations`), {
+      ...locationData,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    return { id: docRef.id, ...locationData };
+  };
+
+  const updateLocation = async (id, updates) => {
+    if (!basePath) return;
+    await updateDoc(doc(db, `${basePath}/locations`, id), {
+      ...updates,
+      updatedAt: serverTimestamp()
+    });
+  };
+
+  const deleteLocation = async (id) => {
+    if (!basePath) return;
+    await deleteDoc(doc(db, `${basePath}/locations`, id));
+  };
+
+  // Encounter methods
+  const addEncounter = async (encounterData) => {
+    if (!basePath) return;
+    const docRef = await addDoc(collection(db, `${basePath}/encounters`), {
+      ...encounterData,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    return { id: docRef.id, ...encounterData };
+  };
+
+  const updateEncounter = async (id, updates) => {
+    if (!basePath) return;
+    await updateDoc(doc(db, `${basePath}/encounters`, id), {
+      ...updates,
+      updatedAt: serverTimestamp()
+    });
+  };
+
+  const deleteEncounter = async (id) => {
+    if (!basePath) return;
+    await deleteDoc(doc(db, `${basePath}/encounters`, id));
+  };
+
   return {
     campaign,
     updateCampaign,
@@ -233,6 +405,22 @@ export function useFirestoreCampaign(campaignId) {
     addSession,
     updateSession,
     deleteSession,
+    npcs,
+    addNPC,
+    updateNPC,
+    deleteNPC,
+    timelineEvents,
+    addTimelineEvent,
+    updateTimelineEvent,
+    deleteTimelineEvent,
+    locations,
+    addLocation,
+    updateLocation,
+    deleteLocation,
+    encounters,
+    addEncounter,
+    updateEncounter,
+    deleteEncounter,
     loading
   };
 }

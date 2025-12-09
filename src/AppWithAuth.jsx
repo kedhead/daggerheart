@@ -11,6 +11,10 @@ import LoreView from './components/Lore/LoreView';
 import SessionsView from './components/Sessions/SessionsView';
 import FilesView from './components/Files/FilesView';
 import ToolsView from './components/Tools/ToolsView';
+import NPCsView from './components/NPCs/NPCsView';
+import TimelineView from './components/Timeline/TimelineView';
+import LocationsView from './components/Locations/LocationsView';
+import EncountersView from './components/Encounters/EncountersView';
 import { useFirestoreCampaign } from './hooks/useFirestoreCampaign';
 import { usePendingInvites } from './hooks/usePendingInvites';
 import './App.css';
@@ -58,6 +62,22 @@ function CampaignApp() {
     addSession,
     updateSession,
     deleteSession,
+    npcs,
+    addNPC,
+    updateNPC,
+    deleteNPC,
+    timelineEvents,
+    addTimelineEvent,
+    updateTimelineEvent,
+    deleteTimelineEvent,
+    locations,
+    addLocation,
+    updateLocation,
+    deleteLocation,
+    encounters,
+    addEncounter,
+    updateEncounter,
+    deleteEncounter,
     loading
   } = useFirestoreCampaign(currentCampaignId);
 
@@ -145,6 +165,47 @@ function CampaignApp() {
         return <ToolsView />;
       case 'members':
         return <CampaignMembers campaign={campaign} currentUserId={currentUser.uid} />;
+      case 'npcs':
+        return (
+          <NPCsView
+            campaign={campaign}
+            addNPC={addNPC}
+            updateNPC={updateNPC}
+            deleteNPC={deleteNPC}
+            isDM={isDM}
+          />
+        );
+      case 'timeline':
+        return (
+          <TimelineView
+            campaign={campaign}
+            addEvent={addTimelineEvent}
+            updateEvent={updateTimelineEvent}
+            deleteEvent={deleteTimelineEvent}
+            isDM={isDM}
+          />
+        );
+      case 'locations':
+        return (
+          <LocationsView
+            campaign={campaign}
+            updateCampaign={updateCampaign}
+            addLocation={addLocation}
+            updateLocation={updateLocation}
+            deleteLocation={deleteLocation}
+            isDM={isDM}
+          />
+        );
+      case 'encounters':
+        return (
+          <EncountersView
+            campaign={campaign}
+            addEncounter={addEncounter}
+            updateEncounter={updateEncounter}
+            deleteEncounter={deleteEncounter}
+            isDM={isDM}
+          />
+        );
       default:
         return (
           <DashboardView

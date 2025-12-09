@@ -1,0 +1,213 @@
+import { useState } from 'react';
+import { Plus, Search, Map as MapIcon, Upload } from 'lucide-react';
+import LocationCard from './LocationCard';
+import LocationForm from './LocationForm';
+import Modal from '../Modal';
+import './LocationsView.css';
+
+export default function LocationsView({ campaign, updateCampaign, addLocation, updateLocation, deleteLocation, isDM }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingLocation, setEditingLocation] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [uploadingMap, setUploadingMap] = useState(false);
+
+  const locations = campaign?.locations || [];
+  const worldMap = campaign?.worldMap || null;
+
+  const handleAdd = () => {
+    setEditingLocation(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (location) => {
+    setEditingLocation(location);
+    setIsModalOpen(true);
+  };
+
+  const handleSave = async (locationData) => {
+    if (editingLocation) {
+      await updateLocation(editingLocation.id, locationData);
+    } else {
+      await addLocation(locationData);
+    }
+    setIsModalOpen(false);
+    setEditingLocation(null);
+  };
+
+  const handleDelete = async (locationId) => {
+    if (confirm('Are you sure you want to delete this location?')) {
+      await deleteLocation(locationId);
+    }
+  };
+
+  const handleMapUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Map image size must be less than 5MB');
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file');
+        return;
+      }
+
+      setUploadingMap(true);
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        await updateCampaign({ worldMap: e.target.result });
+        setUploadingMap(false);
+      };
+      reader.onerror = () => {
+        alert('Failed to upload map');
+        setUploadingMap(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveMap = async () => {
+    if (confirm('Are you sure you want to remove the world map?')) {
+      await updateCampaign({ worldMap: null });
+    }
+  };
+
+  // Filter locations
+  const filteredLocations = locations.filter(location => {
+    return location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           location.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           location.description?.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  return (
+    <div className="locations-view">
+      <div className="view-header">
+        <div>
+          <h2>Locations & Map</h2>
+          <p className="view-subtitle">{locations.length} location{locations.length !== 1 ? 's' : ''} in your world</p>
+        </div>
+        {isDM && (
+          <button className="btn btn-primary" onClick={handleAdd}>
+            <Plus size={20} />
+            Add Location
+          </button>
+        )}
+      </div>
+
+      {/* World Map Section */}
+      {isDM && (
+        <div className="world-map-section card">
+          <h3>
+            <MapIcon size={20} />
+            World Map
+          </h3>
+          {worldMap ? (
+            <div className="world-map-container">
+              <img src={worldMap} alt="World Map" className="world-map-image" />
+              <div className="map-actions">
+                <label className="btn btn-secondary">
+                  <Upload size={16} />
+                  Replace Map
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleMapUpload}
+                    disabled={uploadingMap}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+                <button className="btn btn-danger" onClick={handleRemoveMap}>
+                  Remove Map
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="world-map-upload">
+              <MapIcon size={48} />
+              <p>Upload a world map to visualize your campaign setting</p>
+              <label className="btn btn-primary">
+                {uploadingMap ? 'Uploading...' : 'Upload World Map'}
+                <Upload size={16} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleMapUpload}
+                  disabled={uploadingMap}
+                  style={{ display: 'none' }}
+                />
+              </label>
+              <small className="form-hint">Max 5MB, PNG or JPG recommended</small>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Search */}
+      <div className="locations-controls">
+        <div className="search-box">
+          <Search size={20} />
+          <input
+            type="text"
+            placeholder="Search locations by name, type, or description..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* Locations Grid */}
+      {filteredLocations.length === 0 ? (
+        <div className="empty-state card">
+          {searchTerm ? (
+            <p>No locations match your search</p>
+          ) : (
+            <>
+              <MapIcon size={64} />
+              <p>No locations yet</p>
+              {isDM && (
+                <button className="btn btn-primary" onClick={handleAdd}>
+                  <Plus size={20} />
+                  Add Your First Location
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      ) : (
+        <div className="locations-grid">
+          {filteredLocations.map((location) => (
+            <LocationCard
+              key={location.id}
+              location={location}
+              onEdit={() => handleEdit(location)}
+              onDelete={() => handleDelete(location.id)}
+              isDM={isDM}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingLocation(null);
+        }}
+        title={editingLocation ? 'Edit Location' : 'Add Location'}
+        size="medium"
+      >
+        <LocationForm
+          location={editingLocation}
+          onSave={handleSave}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setEditingLocation(null);
+          }}
+        />
+      </Modal>
+    </div>
+  );
+}
