@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ref, uploadBytesResumable, getDownloadURL, deleteObject, listAll } from 'firebase/storage';
-import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { storage, db } from '../../config/firebase';
+import { doc, updateDoc, serverTimestamp, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { db } from '../../config/firebase';
 import { Upload, File, Image, Map, Trash2, Download, Eye, X } from 'lucide-react';
 import Modal from '../Modal';
 import './FilesView.css';
@@ -16,36 +15,15 @@ export default function FilesView({ campaign, isDM }) {
 
   useEffect(() => {
     loadFiles();
-  }, [campaign.id]);
+  }, [campaign]);
 
   const loadFiles = async () => {
     try {
-      const filesRef = ref(storage, `campaigns/${campaign.id}/files`);
-      const fileList = await listAll(filesRef);
-
-      const filePromises = fileList.items.map(async (item) => {
-        const url = await getDownloadURL(item);
-        const metadata = await item.getMetadata();
-
-        return {
-          name: item.name,
-          url: url,
-          fullPath: item.fullPath,
-          size: metadata.size,
-          contentType: metadata.contentType,
-          timeCreated: metadata.timeCreated,
-          uploadedBy: metadata.customMetadata?.uploadedBy || 'Unknown'
-        };
-      });
-
-      const filesData = await Promise.all(filePromises);
+      // Files are stored directly in the campaign document
+      const filesData = campaign.files || [];
       setFiles(filesData.sort((a, b) => new Date(b.timeCreated) - new Date(a.timeCreated)));
     } catch (error) {
       console.error('Error loading files:', error);
-      // If storage isn't configured yet, just show empty state
-      if (error.code === 'storage/unauthorized' || error.code === 'permission-denied') {
-        console.log('Firebase Storage not yet configured. Files feature will be available once storage rules are set up.');
-      }
       setFiles([]);
     } finally {
       setLoading(false);
@@ -55,9 +33,9 @@ export default function FilesView({ campaign, isDM }) {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file size (max 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        alert('File size must be less than 10MB');
+      // Check file size (max 5MB for Firestore storage)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
         return;
       }
       setSelectedFile(file);
@@ -75,43 +53,49 @@ export default function FilesView({ campaign, isDM }) {
     setUploadProgress(0);
 
     try {
-      const timestamp = Date.now();
-      const fileName = `${timestamp}_${file.name}`;
-      const storageRef = ref(storage, `campaigns/${campaign.id}/files/${fileName}`);
+      // Read file as base64
+      const reader = new FileReader();
 
-      const metadata = {
-        customMetadata: {
-          uploadedBy: campaign.members?.[campaign.dmId]?.displayName || 'DM',
-          campaignId: campaign.id
+      reader.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const progress = (e.loaded / e.total) * 100;
+          setUploadProgress(progress);
         }
       };
 
-      const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+      reader.onload = async (e) => {
+        const dataUrl = e.target.result;
 
-      uploadTask.on('state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-        },
-        (error) => {
-          console.error('Upload error:', error);
-          alert('Failed to upload file');
-          setUploading(false);
-        },
-        async () => {
-          // Upload completed successfully
-          await loadFiles();
-          setUploading(false);
-          setUploadProgress(0);
-          setSelectedFile(null);
+        const fileData = {
+          id: Date.now().toString(),
+          name: file.name,
+          size: file.size,
+          contentType: file.type,
+          dataUrl: dataUrl,
+          timeCreated: new Date().toISOString(),
+          uploadedBy: campaign.members?.[campaign.dmId]?.displayName || 'DM'
+        };
 
-          // Update campaign updated timestamp
-          const campaignRef = doc(db, `campaigns/${campaign.id}`);
-          await updateDoc(campaignRef, {
-            updatedAt: serverTimestamp()
-          });
-        }
-      );
+        // Add file to campaign's files array
+        const campaignRef = doc(db, `campaigns/${campaign.id}`);
+        await updateDoc(campaignRef, {
+          files: arrayUnion(fileData),
+          updatedAt: serverTimestamp()
+        });
+
+        await loadFiles();
+        setUploading(false);
+        setUploadProgress(0);
+        setSelectedFile(null);
+      };
+
+      reader.onerror = (error) => {
+        console.error('Upload error:', error);
+        alert('Failed to upload file');
+        setUploading(false);
+      };
+
+      reader.readAsDataURL(file);
     } catch (error) {
       console.error('Error uploading file:', error);
       alert('Failed to upload file');
@@ -130,8 +114,11 @@ export default function FilesView({ campaign, isDM }) {
     }
 
     try {
-      const fileRef = ref(storage, file.fullPath);
-      await deleteObject(fileRef);
+      const campaignRef = doc(db, `campaigns/${campaign.id}`);
+      await updateDoc(campaignRef, {
+        files: arrayRemove(file),
+        updatedAt: serverTimestamp()
+      });
       await loadFiles();
     } catch (error) {
       console.error('Error deleting file:', error);
@@ -179,7 +166,7 @@ export default function FilesView({ campaign, isDM }) {
         {isDM && (
           <label className="btn btn-primary upload-btn">
             <Upload size={20} />
-            Upload File
+            Upload File (Max 5MB)
             <input
               type="file"
               accept="image/*,.pdf,.txt,.doc,.docx"
@@ -224,10 +211,10 @@ export default function FilesView({ campaign, isDM }) {
       ) : (
         <div className="files-grid">
           {files.map((file) => (
-            <div key={file.fullPath} className="file-card card">
+            <div key={file.id} className="file-card card">
               <div className="file-preview">
                 {isImage(file.contentType) ? (
-                  <img src={file.url} alt={file.name} />
+                  <img src={file.dataUrl} alt={file.name} />
                 ) : (
                   <div className="file-icon-large">
                     {getFileIcon(file.contentType)}
@@ -252,7 +239,7 @@ export default function FilesView({ campaign, isDM }) {
                   </button>
                 )}
                 <a
-                  href={file.url}
+                  href={file.dataUrl}
                   download={file.name}
                   className="btn btn-icon"
                   title="Download"
@@ -282,7 +269,7 @@ export default function FilesView({ campaign, isDM }) {
           size="large"
         >
           <div className="file-viewer">
-            <img src={viewingFile.url} alt={viewingFile.name} />
+            <img src={viewingFile.dataUrl} alt={viewingFile.name} />
           </div>
         </Modal>
       )}
