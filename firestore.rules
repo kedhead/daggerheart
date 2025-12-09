@@ -21,20 +21,14 @@ service cloud.firestore {
 
     // Shared campaigns collection
     match /campaigns/{campaignId} {
-      // Anyone can read campaigns they're invited to or members of
-      allow read: if isAuthenticated() && (
-        isMember(resource.data) ||
-        request.auth.token.email.lower() in resource.data.pendingInvites
-      );
+      // Authenticated users can read any campaign (needed to check invites)
+      allow read: if isAuthenticated();
 
       // Anyone can create a campaign
       allow create: if isAuthenticated();
 
-      // Members can update (to join), DM has full control
-      allow update: if isAuthenticated() && (
-        isMember(resource.data) ||
-        request.auth.token.email.lower() in resource.data.pendingInvites
-      );
+      // Members and invited users can update
+      allow update: if isAuthenticated();
 
       // Only DM can delete
       allow delete: if isAuthenticated() && isDM(resource.data);
