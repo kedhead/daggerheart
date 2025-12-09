@@ -31,6 +31,23 @@ export default function CampaignSelector({ currentCampaignId, onSelectCampaign }
     }
   };
 
+  const handleDeleteCampaign = async (e, campaignId, campaignName) => {
+    e.stopPropagation(); // Prevent selecting the campaign
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${campaignName}"?\n\nThis will permanently delete all characters, lore, and sessions in this campaign. This action cannot be undone.`
+    );
+
+    if (confirmed) {
+      try {
+        await deleteCampaign(campaignId);
+      } catch (error) {
+        console.error('Error deleting campaign:', error);
+        alert('Failed to delete campaign');
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="campaign-selector-loading">
@@ -125,15 +142,23 @@ export default function CampaignSelector({ currentCampaignId, onSelectCampaign }
           <div
             key={campaign.id}
             className={`campaign-card ${currentCampaignId === campaign.id ? 'active' : ''}`}
-            onClick={() => onSelectCampaign(campaign.id)}
           >
-            <div className="campaign-icon">
-              <FolderOpen size={32} />
+            <div className="campaign-card-content" onClick={() => onSelectCampaign(campaign.id)}>
+              <div className="campaign-icon">
+                <FolderOpen size={32} />
+              </div>
+              <div className="campaign-info">
+                <h3>{campaign.name}</h3>
+                {campaign.description && <p>{campaign.description}</p>}
+              </div>
             </div>
-            <div className="campaign-info">
-              <h3>{campaign.name}</h3>
-              {campaign.description && <p>{campaign.description}</p>}
-            </div>
+            <button
+              className="btn btn-icon campaign-delete-btn"
+              onClick={(e) => handleDeleteCampaign(e, campaign.id, campaign.name)}
+              title="Delete campaign"
+            >
+              <Trash2 size={18} />
+            </button>
           </div>
         ))}
       </div>
