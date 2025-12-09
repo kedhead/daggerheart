@@ -12,6 +12,12 @@ export default function CampaignMembers({ campaign, currentUserId }) {
   const isDM = campaign.dmId === currentUserId;
   const members = campaign.members || {};
 
+  console.log('CampaignMembers Debug:');
+  console.log('Current User ID:', currentUserId);
+  console.log('Campaign DM ID:', campaign.dmId);
+  console.log('Is DM?', isDM);
+  console.log('Members:', members);
+
   const handleChangeRole = async (uid, newRole) => {
     if (!isDM) {
       alert('Only the DM can change member roles');
