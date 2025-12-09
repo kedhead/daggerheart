@@ -143,23 +143,31 @@
   min-height: 60vh;
   text-align: center;
   color: var(--text-muted);
+  gap: 1rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 .campaign-selector-empty svg {
   color: var(--text-muted);
-  margin-bottom: 2rem;
   opacity: 0.5;
 }
 
 .campaign-selector-empty h2 {
   font-size: 2rem;
-  margin-bottom: 0.5rem;
+  margin: 0;
   color: var(--text-primary);
 }
 
 .campaign-selector-empty p {
   font-size: 1.1rem;
-  margin-bottom: 2rem;
+  margin: 0;
+}
+
+.campaign-selector-empty .btn {
+  margin-top: 0.5rem;
 }
 
 .empty-state-help {
