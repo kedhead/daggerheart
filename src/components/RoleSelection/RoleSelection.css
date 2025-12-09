@@ -1,0 +1,115 @@
+.role-selection {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg-primary);
+}
+
+.role-selection-container {
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+}
+
+.role-selection h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-family: 'Cinzel', serif;
+  background: linear-gradient(135deg, var(--hope-color), var(--fear-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.role-selection-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
+}
+
+.role-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.role-option {
+  background: var(--card-bg);
+  border: 3px solid var(--border);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.role-option:hover {
+  transform: translateY(-8px);
+  border-color: var(--hope-color);
+}
+
+.role-option.selected {
+  border-color: var(--hope-color);
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), var(--card-bg));
+  box-shadow: 0 8px 24px rgba(234, 179, 8, 0.2);
+}
+
+.role-option.selected .role-icon.dm {
+  background: linear-gradient(135deg, var(--fear-color), var(--fear-secondary));
+}
+
+.role-option.selected .role-icon.player {
+  background: linear-gradient(135deg, var(--hope-color), var(--hope-secondary));
+}
+
+.role-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.role-icon.dm {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(167, 139, 250, 0.2));
+}
+
+.role-icon.player {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(245, 158, 11, 0.2));
+}
+
+.role-option.selected .role-icon {
+  color: white;
+}
+
+.role-option h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-family: 'Cinzel', serif;
+}
+
+.role-option p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.btn-large {
+  padding: 1rem 3rem;
+  font-size: 1.1rem;
+  min-width: 200px;
+}
+
+.role-selection-note {
+  margin-top: 2rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-style: italic;
+}

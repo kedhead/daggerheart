@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AuthPage from './components/Auth/AuthPage';
 import CampaignSelector from './components/Campaigns/CampaignSelector';
 import CampaignMembers from './components/Campaigns/CampaignMembers';
+import RoleSelection from './components/RoleSelection/RoleSelection';
 import SidebarWithAuth from './components/SidebarWithAuth';
 import DashboardView from './components/Dashboard/DashboardView';
 import CharactersView from './components/Characters/CharactersView';
@@ -16,6 +17,7 @@ import './App.css';
 function CampaignApp() {
   const { currentUser } = useAuth();
   const { checking, joinedCampaigns } = usePendingInvites();
+  const [userRole, setUserRole] = useState(localStorage.getItem('userRole') || null);
 
   // Show notification when user joins campaigns
   useEffect(() => {
@@ -24,6 +26,17 @@ function CampaignApp() {
       alert(`Welcome! You've been added to: ${names}`);
     }
   }, [joinedCampaigns]);
+
+  const handleRoleSelection = (role) => {
+    localStorage.setItem('userRole', role);
+    setUserRole(role);
+  };
+
+  // Show role selection if user hasn't chosen yet
+  if (!userRole) {
+    return <RoleSelection onSelectRole={handleRoleSelection} />;
+  }
+
   const [currentView, setCurrentView] = useState('dashboard');
   const [currentCampaignId, setCurrentCampaignId] = useState(
     localStorage.getItem('lastCampaignId') || null
@@ -66,6 +79,7 @@ function CampaignApp() {
         <CampaignSelector
           currentCampaignId={currentCampaignId}
           onSelectCampaign={handleSelectCampaign}
+          userRole={userRole}
         />
       </div>
     );

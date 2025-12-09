@@ -4,12 +4,14 @@ import { useCampaigns } from '../../hooks/useCampaigns';
 import Modal from '../Modal';
 import './CampaignSelector.css';
 
-export default function CampaignSelector({ currentCampaignId, onSelectCampaign }) {
+export default function CampaignSelector({ currentCampaignId, onSelectCampaign, userRole }) {
   const { campaigns, loading, createCampaign, deleteCampaign } = useCampaigns();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [campaignName, setCampaignName] = useState('');
   const [campaignDescription, setCampaignDescription] = useState('');
   const [creating, setCreating] = useState(false);
+
+  const isDM = userRole === 'dm';
 
   const handleCreateCampaign = async (e) => {
     e.preventDefault();
@@ -62,14 +64,26 @@ export default function CampaignSelector({ currentCampaignId, onSelectCampaign }
       <div className="campaign-selector-empty">
         <FolderOpen size={64} />
         <h2>No Campaigns Yet</h2>
-        <p>Create your first campaign to get started</p>
-        <button
-          className="btn btn-primary"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <Plus size={20} />
-          Create Campaign
-        </button>
+        {isDM ? (
+          <>
+            <p>Create your first campaign to get started</p>
+            <button
+              className="btn btn-primary"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <Plus size={20} />
+              Create Campaign
+            </button>
+          </>
+        ) : (
+          <>
+            <p>You haven't joined any campaigns yet</p>
+            <p className="empty-state-help">
+              Ask your Dungeon Master to invite you to their campaign.
+              They'll need to add your email address to their campaign's whitelist.
+            </p>
+          </>
+        )}
 
         <Modal
           isOpen={isModalOpen}
@@ -128,13 +142,15 @@ export default function CampaignSelector({ currentCampaignId, onSelectCampaign }
     <div className="campaign-selector">
       <div className="campaign-selector-header">
         <h2>My Campaigns</h2>
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <Plus size={16} />
-          New Campaign
-        </button>
+        {isDM && (
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <Plus size={16} />
+            New Campaign
+          </button>
+        )}
       </div>
 
       <div className="campaigns-grid">
