@@ -42,6 +42,11 @@ export default function FilesView({ campaign, isDM }) {
       setFiles(filesData.sort((a, b) => new Date(b.timeCreated) - new Date(a.timeCreated)));
     } catch (error) {
       console.error('Error loading files:', error);
+      // If storage isn't configured yet, just show empty state
+      if (error.code === 'storage/unauthorized' || error.code === 'permission-denied') {
+        console.log('Firebase Storage not yet configured. Files feature will be available once storage rules are set up.');
+      }
+      setFiles([]);
     } finally {
       setLoading(false);
     }
