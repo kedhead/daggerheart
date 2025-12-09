@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { collection, query, where, onSnapshot, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../../firebase/config';
+import { db } from '../../config/firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { ArrowLeft, Users, UserPlus, Clock, CheckCircle, XCircle } from 'lucide-react';
 import './CampaignBrowser.css';
