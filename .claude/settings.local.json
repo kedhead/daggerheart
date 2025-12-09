@@ -10,7 +10,8 @@
       "Bash(git branch:*)",
       "Bash(git push:*)",
       "Bash(npm install:*)",
-      "Bash(npm run deploy:*)"
+      "Bash(npm run deploy:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []
