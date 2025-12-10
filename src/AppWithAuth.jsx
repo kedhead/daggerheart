@@ -17,6 +17,7 @@ import LocationsView from './components/Locations/LocationsView';
 import EncountersView from './components/Encounters/EncountersView';
 import NotesView from './components/Notes/NotesView';
 import CampaignBuilderView from './components/CampaignBuilder/CampaignBuilderView';
+import APISettings from './components/Settings/APISettings';
 import { useFirestoreCampaign } from './hooks/useFirestoreCampaign';
 import { usePendingInvites } from './hooks/usePendingInvites';
 import './App.css';
@@ -240,6 +241,8 @@ function CampaignApp() {
             onBack={() => setCurrentView('dashboard')}
           />
         );
+      case 'apiSettings':
+        return <APISettings userId={currentUser.uid} />;
       default:
         return (
           <DashboardView

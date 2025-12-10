@@ -25,3 +25,7 @@ dist-ssr
 # Environment variables
 .env.local
 .envDaggerheart-Core-Rulebook-5-20-2025-1.pdf
+
+# Large documentation files
+*.pdf
+daggerheart-campaign-frames (1).*
