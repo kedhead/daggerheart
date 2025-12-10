@@ -76,6 +76,15 @@
   color: var(--text-secondary);
 }
 
+.mode-tab .mode-label,
+.mode-tab .mode-description {
+  color: var(--text);
+}
+
+.mode-tab .mode-description {
+  opacity: 0.8;
+}
+
 .mode-warning {
   font-size: 0.75rem;
   color: var(--warning-color);
