@@ -15,15 +15,18 @@ import DistinctionsStep from './wizard/steps/DistinctionsStep';
 import IncitingIncidentStep from './wizard/steps/IncitingIncidentStep';
 import CampaignMechanicsStep from './wizard/steps/CampaignMechanicsStep';
 import SessionZeroStep from './wizard/steps/SessionZeroStep';
+import { useAPIKey } from '../../hooks/useAPIKey';
 import { CheckCircle } from 'lucide-react';
 import './CampaignBuilder.css';
 
 export default function CampaignBuilderWizard({
+  userId,
   campaign,
   campaignFrame,
   wizardState,
   onComplete
 }) {
+  const { hasKey } = useAPIKey(userId);
   const {
     currentStep,
     completedSteps,
@@ -78,7 +81,9 @@ export default function CampaignBuilderWizard({
     const stepProps = {
       value: getStepData(currentStep, data),
       onChange: (value) => updateData(getStepKey(currentStep), value),
-      campaign
+      campaign,
+      userId,
+      hasAPIKey: hasKey()
     };
 
     switch (currentStep) {

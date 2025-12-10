@@ -232,6 +232,7 @@ function CampaignApp() {
       case 'campaignBuilder':
         return (
           <CampaignBuilderView
+            userId={currentUser.uid}
             campaign={campaign}
             campaignFrame={campaignFrame}
             campaignFrameDraft={campaignFrameDraft}

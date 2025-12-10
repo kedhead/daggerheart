@@ -6,6 +6,7 @@ import { getAvailableTemplates } from '../../data/campaignFrameTemplates';
 import './CampaignBuilder.css';
 
 export default function CampaignBuilderView({
+  userId,
   campaign,
   campaignFrame,
   campaignFrameDraft,
@@ -55,6 +56,7 @@ export default function CampaignBuilderView({
   if (wizardStarted) {
     return (
       <CampaignBuilderWizard
+        userId={userId}
         campaign={campaign}
         campaignFrame={campaignFrame}
         wizardState={wizardState}
