@@ -16,32 +16,26 @@ export const aiService = {
    */
   async generateWithClaude(prompt, apiKey, model = 'claude-3-5-sonnet-20241022') {
     try {
-      const response = await fetch(ANTHROPIC_API_URL, {
+      const response = await fetch('/api/generate', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model,
-          max_tokens: 4096,
-          messages: [
-            {
-              role: 'user',
-              content: prompt
-            }
-          ]
+          prompt,
+          apiKey,
+          provider: 'anthropic',
+          model
         })
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || `API request failed with status ${response.status}`);
+        const error = await response.json().catch(() => ({ error: response.statusText }));
+        throw new Error(error.error || error.message || `API request failed with status ${response.status}`);
       }
 
       const data = await response.json();
-      return data.content[0].text;
+      return data.response || '';
     } catch (error) {
       console.error('Claude API error:', error);
       throw this._formatError(error);
@@ -57,36 +51,26 @@ export const aiService = {
    */
   async generateWithOpenAI(prompt, apiKey, model = 'gpt-4-turbo-preview') {
     try {
-      const response = await fetch(OPENAI_API_URL, {
+      const response = await fetch('/api/generate', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model,
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a helpful assistant for creating Daggerheart TTRPG campaign content. Always respond in valid JSON format when requested.'
-            },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 2000
+          prompt,
+          apiKey,
+          provider: 'openai',
+          model
         })
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || `API request failed with status ${response.status}`);
+        const error = await response.json().catch(() => ({ error: response.statusText }));
+        throw new Error(error.error || error.message || `API request failed with status ${response.status}`);
       }
 
       const data = await response.json();
-      return data.choices[0].message.content;
+      return data.response || '';
     } catch (error) {
       console.error('OpenAI API error:', error);
       throw this._formatError(error);
