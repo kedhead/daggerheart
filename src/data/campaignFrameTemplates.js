@@ -170,6 +170,152 @@ export const CAMPAIGN_FRAME_TEMPLATES = [
     ]
   },
   {
+    id: 'ageOfUmbra',
+    name: 'The Age of Umbra',
+    complexity: 3,
+    pitch: 'In a dying world immersed in relentless shadow and nightmarish monsters, small communities hold fast to the light, hoping those who endure can find a way to save this broken realm before all is lost to darkness.',
+    toneAndFeel: ['Ancient', 'Daunting', 'Epic', 'Grim', 'Ominous', 'Terrifying', 'Tragic'],
+    themes: ['Apocalypse', 'Corruption', 'Darkness vs Light', 'Hope', 'Redemption', 'Survival'],
+    touchstones: ['Dark Souls', 'Kingdom Death: Monster', 'Berserk', 'The Seventh Seal', 'Blasphemous'],
+    overview: 'The Halcyon Domain rots after the gods\' abandonment. God-King Othedias betrayed the Pantheon, causing divine punishment known as The Apostasy. Now The Enduring survive among ruins, protected by Sacred Pyres from The Umbra - a dark mass of malevolent twisted souls. The Soul Blight ensures all dead rise as corrupted revenants. Ancient Aetherweave magic is blamed for the divine wrath.',
+    communities: {
+      enduring: {
+        description: 'Survivors who rebuild among the ruins, protected by Sacred Pyres',
+        questions: ['What did you lose in The Apostasy?', 'How do you keep hope alive in darkness?']
+      }
+    },
+    playerPrinciples: [
+      'Endure and Protect Your Allies',
+      'Confront the Terror with Bravery',
+      'Seek Compassion Amid Corruption',
+      'Embrace Epic, Memorable Character Deaths'
+    ],
+    gmPrinciples: [
+      'Create Dread and Despair, Then Contrast with Hope',
+      'Make Death Meaningful and Frequent',
+      'Show the Horror of Corruption',
+      'Reward Bravery and Sacrifice'
+    ],
+    distinctions: [
+      {
+        name: 'The Umbra',
+        description: 'Dark ethereal mass of malevolent twisted souls that consumes the world'
+      },
+      {
+        name: 'Sacred Pyres',
+        description: 'Hallowed fires that repel the Umbra\'s horrors and protect The Enduring'
+      },
+      {
+        name: 'Soul Blight',
+        description: 'Curse ensuring all dead rise as corrupted revenants seeking to kill those they loved'
+      }
+    ],
+    incitingIncident: 'A Sacred Pyre protecting your settlement is dying. You must venture into the darkness to find a Blessed Branch to reignite it, or your entire community will be consumed by The Umbra.',
+    campaignMechanics: [
+      {
+        name: 'The Strength of Hate',
+        description: 'Umbra-Touched adversaries and scarred heroes grow more dangerous',
+        rules: 'Umbra-Touched adversaries crit on 19-20. PCs deal extra damage equal to their number of scars. When PC marks last Hope slot with scar, they succumb to Umbra (not retire).'
+      },
+      {
+        name: 'Lurking Darkness',
+        description: 'Rest outside Sacred Pyres is perilous',
+        rules: 'Roll d12 when resting: 1-2 monster attack, 3-5 stalked (+2 Fear), 6-9 darkness (+1 Fear), 10-11 undisturbed, 12 hopeful omen (+1 Hope each).'
+      },
+      {
+        name: 'Soul Blight',
+        description: 'Dead rise as zombies seeking vengeance on loved ones',
+        rules: 'When humanoid dies, GM can spend 1-2 Fear to raise as zombie. Zombies seek to kill everyone they cared for. When destroyed, soul joins Umbra.'
+      }
+    ],
+    sessionZeroQuestions: [
+      'What keeps you fighting in this dying world?',
+      'Who have you lost to The Umbra?',
+      'What Sacred Pyre do you protect?',
+      'What forbidden knowledge of Aetherweave do you possess?',
+      'What horror have you witnessed that others wouldn\'t believe?',
+      'How do you honor those lost to Soul Blight?',
+      'What desperate hope drives you forward?'
+    ]
+  },
+  {
+    id: 'motherboard',
+    name: 'Motherboard',
+    complexity: 3,
+    pitch: 'In a world where magic takes the form of technology left behind by a long-fallen civilization, a new threat rises as a malicious virus spreads through the machines that wander the Wastes.',
+    toneAndFeel: ['Adventurous', 'Epic', 'Innovative', 'Mysterious', 'Post-Post-Apocalyptic', 'Technological'],
+    themes: ['Artificial Intelligence', 'Identity & Personhood', 'Innovation', 'Technology vs. Humanity'],
+    touchstones: ['Horizon Zero Dawn', 'Mortal Engines', 'Mad Max: Fury Road', 'Final Fantasy', 'Fullmetal Alchemist', 'Slugblaster'],
+    overview: 'Echo Vale thrives among ruins of a fallen civilization, powered by The Network - a dense web of glimmering wire emanating from The Motherboard spire. Autonomous machines called Remnants roam as tame companions or wild hunters. But The Remnant\'s Fury virus now causes machines to attack violently. Cities can be walled or wandering. Quantum currency flows through black discs, and ancient Kohd programming language holds secrets of the past.',
+    communities: {
+      valeborn: {
+        description: 'Citizens of Echo Vale\'s cities, living among the ancient technology',
+        questions: ['What walled or wandering city do you call home?', 'How do you view the Remnants?']
+      },
+      wastelanders: {
+        description: 'Scavengers who hunt for scrap and relics in the ruins',
+        questions: ['What relic are you searching for?', 'What danger of the Wastes haunts you?']
+      }
+    },
+    playerPrinciples: [
+      'Question the Nature of Consciousness',
+      'Embrace Innovation Over Tradition',
+      'Protect the Innocent Remnants',
+      'Uncover the Secrets of the Past'
+    ],
+    gmPrinciples: [
+      'Make Technology Wondrous and Mysterious',
+      'Show Both Beauty and Danger in Remnants',
+      'Reward Creative Problem Solving',
+      'Reveal the Fall Gradually'
+    ],
+    distinctions: [
+      {
+        name: 'The Network',
+        description: 'Web of glimmering wire carrying data and power throughout Echo Vale'
+      },
+      {
+        name: 'Remnants',
+        description: 'Autonomous machines of the fallen world, either tame or wild'
+      },
+      {
+        name: 'The Remnant\'s Fury',
+        description: 'Virus causing remnants to attack violently and unpredictably'
+      },
+      {
+        name: 'Ikonis Weapons',
+        description: 'Personalized weapons that grow with their wielder, modified with scrap'
+      }
+    ],
+    incitingIncident: 'A beloved tame Remnant in your city suddenly goes berserk, infected by The Remnant\'s Fury. You must track the virus to its source before the entire Network is compromised and all Remnants turn hostile.',
+    campaignMechanics: [
+      {
+        name: 'Ikonis System',
+        description: 'Personalized bonded weapons with augment slots',
+        rules: 'Two-handed weapon with +damage equal to level. Has 2 augment slots at Tier 1, +1 per tier. Augments crafted from scrap and swapped during downtime.'
+      },
+      {
+        name: 'Scrap & Crafting',
+        description: 'Economy based on Quantum currency and scrap materials',
+        rules: 'Shards (d6), Metals (d8), Components (d10). Loot varies by fight difficulty. Relics worth 20 quantum. No standard gold.'
+      },
+      {
+        name: 'Tech Damage',
+        description: 'Magic reflavored as technology',
+        rules: 'All magic damage is tech damage from technomancy, plasma beams, nanobots, drones, etc.'
+      }
+    ],
+    sessionZeroQuestions: [
+      'What Remnant companion do you dream of bonding with?',
+      'What piece of ancient technology fascinates you?',
+      'How did you acquire your Ikonis weapon?',
+      'What do you believe caused the fall of the old civilization?',
+      'What wandering city would you most want to visit?',
+      'What scrap component are you desperately seeking?',
+      'Do you believe Remnants have souls?'
+    ]
+  },
+  {
     id: 'colossus',
     name: 'Colossus of the Drylands',
     complexity: 3,
