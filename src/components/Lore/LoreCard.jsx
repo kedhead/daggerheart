@@ -14,7 +14,9 @@ const TYPE_ICONS = {
 
 export default function LoreCard({ lore, onEdit, onDelete, isDM }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const Icon = TYPE_ICONS[lore.type];
+  // Support both 'type' and 'category' for backwards compatibility
+  const loreType = lore.type || lore.category || 'other';
+  const Icon = TYPE_ICONS[loreType] || MoreHorizontal;
 
   return (
     <div className={`lore-card card ${lore.hidden ? 'hidden-entry' : ''}`}>
@@ -24,7 +26,7 @@ export default function LoreCard({ lore, onEdit, onDelete, isDM }) {
         </div>
         <div className="lore-info">
           <div className="lore-title-row">
-            <h3>{lore.title}</h3>
+            <h3>{lore.title || 'Untitled'}</h3>
             {lore.hidden && isDM && (
               <span className="badge badge-fear">
                 <EyeOff size={12} />
@@ -32,7 +34,7 @@ export default function LoreCard({ lore, onEdit, onDelete, isDM }) {
               </span>
             )}
           </div>
-          <p className="lore-type">{lore.type.charAt(0).toUpperCase() + lore.type.slice(1)}</p>
+          <p className="lore-type">{loreType.charAt(0).toUpperCase() + loreType.slice(1)}</p>
         </div>
         <button className="btn btn-icon expand-btn">
           {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
@@ -42,12 +44,12 @@ export default function LoreCard({ lore, onEdit, onDelete, isDM }) {
       {isExpanded && (
         <div className="lore-details">
           <div className="lore-content">
-            {lore.content}
+            {lore.content || 'No content'}
           </div>
 
-          {lore.tags && lore.tags.length > 0 && (
+          {lore.tags && Array.isArray(lore.tags) && lore.tags.length > 0 && (
             <div className="lore-tags">
-              {lore.tags.map((tag, index) => (
+              {lore.tags.filter(tag => tag).map((tag, index) => (
                 <span key={index} className="badge">{tag}</span>
               ))}
             </div>
