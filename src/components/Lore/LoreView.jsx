@@ -34,13 +34,15 @@ export default function LoreView({ lore, addLore, updateLore, deleteLore, isDM }
 
   const visibleLore = lore.filter(entry => {
     if (!isDM && entry.hidden) return false;
-    if (typeFilter !== 'all' && entry.type !== typeFilter) return false;
+    // Check both 'type' and 'category' for backwards compatibility
+    const entryType = entry.type || entry.category;
+    if (typeFilter !== 'all' && entryType !== typeFilter) return false;
     if (searchTerm) {
       const search = searchTerm.toLowerCase();
       return (
-        entry.title.toLowerCase().includes(search) ||
-        entry.content.toLowerCase().includes(search) ||
-        entry.tags.some(tag => tag.toLowerCase().includes(search))
+        (entry.title || '').toLowerCase().includes(search) ||
+        (entry.content || '').toLowerCase().includes(search) ||
+        (Array.isArray(entry.tags) && entry.tags.some(tag => tag?.toLowerCase().includes(search)))
       );
     }
     return true;
@@ -76,7 +78,7 @@ export default function LoreView({ lore, addLore, updateLore, deleteLore, isDM }
             <Filter size={18} />
             <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
               <option value="all">All Types</option>
-              {LORE_TYPES.map(type => (
+              {LORE_TYPES.filter(type => type).map(type => (
                 <option key={type} value={type}>
                   {type.charAt(0).toUpperCase() + type.slice(1)}
                 </option>

@@ -68,47 +68,84 @@ export default function CampaignBuilderWizard({
 
     try {
       // Save the campaign frame first
-      setGenerationProgress('Saving campaign frame...');
+      setGenerationProgress('Step 1/6: Saving campaign frame...');
       await complete();
 
       // Generate campaign content
-      setGenerationProgress('Generating NPCs...');
+      setGenerationProgress('Step 2/6: Generating content...');
       const apiKey = hasKey('anthropic') ? keys.anthropic : (hasKey('openai') ? keys.openai : null);
       const provider = hasKey('anthropic') ? 'anthropic' : 'openai';
 
+      console.log('Starting content generation with API key:', apiKey ? 'Yes' : 'No');
       const generatedContent = await generateCampaignContent(data, campaign, apiKey, provider);
+      console.log('Generated content:', generatedContent);
 
       // Save NPCs
-      setGenerationProgress(`Saving ${generatedContent.npcs.length} NPCs...`);
-      for (const npc of generatedContent.npcs) {
-        await addNPC(npc);
+      setGenerationProgress(`Step 3/6: Saving ${generatedContent.npcs.length} NPCs...`);
+      for (let i = 0; i < generatedContent.npcs.length; i++) {
+        const npc = generatedContent.npcs[i];
+        console.log(`Saving NPC ${i + 1}:`, npc);
+        try {
+          await addNPC(npc);
+          console.log(`NPC ${i + 1} saved successfully`);
+        } catch (err) {
+          console.error(`Failed to save NPC ${i + 1}:`, err);
+        }
       }
 
       // Save Locations
-      setGenerationProgress(`Saving ${generatedContent.locations.length} locations...`);
-      for (const location of generatedContent.locations) {
-        await addLocation(location);
+      setGenerationProgress(`Step 4/6: Saving ${generatedContent.locations.length} locations...`);
+      for (let i = 0; i < generatedContent.locations.length; i++) {
+        const location = generatedContent.locations[i];
+        console.log(`Saving Location ${i + 1}:`, location);
+        try {
+          await addLocation(location);
+          console.log(`Location ${i + 1} saved successfully`);
+        } catch (err) {
+          console.error(`Failed to save Location ${i + 1}:`, err);
+        }
       }
 
       // Save Lore
-      setGenerationProgress(`Saving ${generatedContent.lore.length} lore entries...`);
-      for (const lore of generatedContent.lore) {
-        await addLore(lore);
+      setGenerationProgress(`Step 5/6: Saving ${generatedContent.lore.length} lore entries...`);
+      for (let i = 0; i < generatedContent.lore.length; i++) {
+        const lore = generatedContent.lore[i];
+        console.log(`Saving Lore ${i + 1}:`, lore);
+        try {
+          await addLore(lore);
+          console.log(`Lore ${i + 1} saved successfully`);
+        } catch (err) {
+          console.error(`Failed to save Lore ${i + 1}:`, err);
+        }
       }
 
       // Save Encounters
-      setGenerationProgress(`Saving ${generatedContent.encounters.length} encounters...`);
-      for (const encounter of generatedContent.encounters) {
-        await addEncounter(encounter);
+      setGenerationProgress(`Step 6/6: Saving ${generatedContent.encounters.length} encounters...`);
+      for (let i = 0; i < generatedContent.encounters.length; i++) {
+        const encounter = generatedContent.encounters[i];
+        console.log(`Saving Encounter ${i + 1}:`, encounter);
+        try {
+          await addEncounter(encounter);
+          console.log(`Encounter ${i + 1} saved successfully`);
+        } catch (err) {
+          console.error(`Failed to save Encounter ${i + 1}:`, err);
+        }
       }
 
       // Save Timeline Events
-      setGenerationProgress(`Saving ${generatedContent.timelineEvents.length} timeline events...`);
-      for (const event of generatedContent.timelineEvents) {
-        await addTimelineEvent(event);
+      setGenerationProgress(`Step 6/6: Saving ${generatedContent.timelineEvents.length} timeline events...`);
+      for (let i = 0; i < generatedContent.timelineEvents.length; i++) {
+        const event = generatedContent.timelineEvents[i];
+        console.log(`Saving Timeline Event ${i + 1}:`, event);
+        try {
+          await addTimelineEvent(event);
+          console.log(`Timeline Event ${i + 1} saved successfully`);
+        } catch (err) {
+          console.error(`Failed to save Timeline Event ${i + 1}:`, err);
+        }
       }
 
-      setGenerationProgress('Complete!');
+      setGenerationProgress('Complete! Campaign content generated and saved.');
       setGenerationComplete(true);
 
       // Give user a moment to see the success message
