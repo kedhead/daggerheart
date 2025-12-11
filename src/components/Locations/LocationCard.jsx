@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, Edit3, Trash2, MapPin } from 'lucide-react';
+import { ChevronDown, ChevronRight, Edit3, Trash2, MapPin, Map, Loader2 } from 'lucide-react';
 import './LocationsView.css';
 
-export default function LocationCard({ location, onEdit, onDelete, isDM }) {
+export default function LocationCard({ location, onEdit, onDelete, onGenerateMap, isDM, generatingMapFor }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const isGeneratingMap = generatingMapFor === location.id;
 
   const getTypeColor = (type) => {
     const typeColors = {
@@ -70,12 +71,44 @@ export default function LocationCard({ location, onEdit, onDelete, isDM }) {
             </div>
           )}
 
+          {/* Location Map Section */}
+          {location.mapUrl && (
+            <div className="location-section">
+              <h4>Location Map</h4>
+              <div className="location-map-container">
+                <img src={location.mapUrl} alt={`Map of ${location.name}`} className="location-map-image" />
+                {location.mapDescription && (
+                  <p className="map-description">{location.mapDescription}</p>
+                )}
+              </div>
+            </div>
+          )}
+
           {isDM && (
             <div className="location-actions">
               <button className="btn btn-secondary" onClick={onEdit}>
                 <Edit3 size={16} />
                 Edit
               </button>
+              {onGenerateMap && (
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => onGenerateMap(location)}
+                  disabled={isGeneratingMap}
+                >
+                  {isGeneratingMap ? (
+                    <>
+                      <Loader2 size={16} className="spinner" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Map size={16} />
+                      {location.mapUrl ? 'Regenerate Map' : 'Generate Map'}
+                    </>
+                  )}
+                </button>
+              )}
               <button className="btn btn-danger" onClick={onDelete}>
                 <Trash2 size={16} />
                 Delete

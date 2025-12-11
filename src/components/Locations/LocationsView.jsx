@@ -4,14 +4,18 @@ import LocationCard from './LocationCard';
 import LocationForm from './LocationForm';
 import Modal from '../Modal';
 import QuickGeneratorModal from '../CampaignBuilder/QuickGeneratorModal';
+import { useAPIKey } from '../../hooks/useAPIKey';
+import { generateMap } from '../../services/mapGenerator';
 import './LocationsView.css';
 
-export default function LocationsView({ campaign, locations = [], updateCampaign, addLocation, updateLocation, deleteLocation, isDM }) {
+export default function LocationsView({ campaign, locations = [], updateCampaign, addLocation, updateLocation, deleteLocation, isDM, userId }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [uploadingMap, setUploadingMap] = useState(false);
   const [quickGenOpen, setQuickGenOpen] = useState(false);
+  const [generatingMapFor, setGeneratingMapFor] = useState(null);
+  const { hasKey, keys } = useAPIKey(userId);
   const worldMap = campaign?.worldMap || null;
 
   const handleAdd = () => {
@@ -71,6 +75,56 @@ export default function LocationsView({ campaign, locations = [], updateCampaign
   const handleRemoveMap = async () => {
     if (confirm('Are you sure you want to remove the world map?')) {
       await updateCampaign({ worldMap: null });
+    }
+  };
+
+  const handleGenerateLocationMap = async (location) => {
+    if (!hasKey()) {
+      alert('Please add an API key in Settings to use AI map generation.');
+      return;
+    }
+
+    setGeneratingMapFor(location.id);
+
+    try {
+      console.log(`Generating map for location: ${location.name}`);
+
+      const apiKey = hasKey('anthropic') ? keys.anthropic : (hasKey('openai') ? keys.openai : null);
+      const provider = hasKey('anthropic') ? 'anthropic' : 'openai';
+      const openaiKey = hasKey('openai') ? keys.openai : null;
+
+      // Determine map type based on location type
+      const mapType = ['city', 'town', 'village'].includes(location.type) ? 'local' : 'regional';
+
+      const mapData = await generateMap(
+        {
+          campaign,
+          locations: locations.filter(loc => loc.id !== location.id), // Other nearby locations
+          mapType: mapType,
+          specificLocation: location,
+          mapName: `${location.name} Map`
+        },
+        apiKey,
+        provider,
+        openaiKey,
+        !!openaiKey // Generate image if we have OpenAI key
+      );
+
+      console.log('Map generated:', mapData);
+
+      // Save map to location
+      await updateLocation(location.id, {
+        mapUrl: mapData.imageUrl,
+        mapDescription: mapData.description,
+        mapType: mapData.type
+      });
+
+      console.log('Map saved to location');
+    } catch (error) {
+      console.error('Error generating location map:', error);
+      alert(`Failed to generate map: ${error.message}`);
+    } finally {
+      setGeneratingMapFor(null);
     }
   };
 
@@ -189,6 +243,8 @@ export default function LocationsView({ campaign, locations = [], updateCampaign
               location={location}
               onEdit={() => handleEdit(location)}
               onDelete={() => handleDelete(location.id)}
+              onGenerateMap={isDM ? handleGenerateLocationMap : null}
+              generatingMapFor={generatingMapFor}
               isDM={isDM}
             />
           ))}

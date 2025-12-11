@@ -172,7 +172,15 @@ function CampaignApp() {
           />
         );
       case 'files':
-        return <FilesView campaign={campaign} isDM={isDM} />;
+        return (
+          <FilesView
+            campaign={campaign}
+            isDM={isDM}
+            userId={currentUser.uid}
+            locations={locations}
+            updateCampaign={updateCampaign}
+          />
+        );
       case 'tools':
         return <ToolsView />;
       case 'members':
@@ -209,6 +217,7 @@ function CampaignApp() {
             updateLocation={updateLocation}
             deleteLocation={deleteLocation}
             isDM={isDM}
+            userId={currentUser.uid}
           />
         );
       case 'encounters':

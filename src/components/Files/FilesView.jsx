@@ -1,17 +1,24 @@
 import { useState, useEffect } from 'react';
 import { doc, updateDoc, serverTimestamp, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import { Upload, File, Image, Map, Trash2, Download, Eye, X } from 'lucide-react';
+import { Upload, File, Image, Map, Trash2, Download, Eye, X, Wand2, Loader2 } from 'lucide-react';
 import Modal from '../Modal';
+import { useAPIKey } from '../../hooks/useAPIKey';
+import { generateMap } from '../../services/mapGenerator';
 import './FilesView.css';
 
-export default function FilesView({ campaign, isDM }) {
+export default function FilesView({ campaign, isDM, userId, locations = [], updateCampaign }) {
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
   const [viewingFile, setViewingFile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [generatingMap, setGeneratingMap] = useState(false);
+  const [showMapGenerator, setShowMapGenerator] = useState(false);
+  const [mapType, setMapType] = useState('world');
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const { hasKey, keys } = useAPIKey(userId);
 
   useEffect(() => {
     loadFiles();
@@ -126,6 +133,94 @@ export default function FilesView({ campaign, isDM }) {
     }
   };
 
+  const handleGenerateMap = async () => {
+    if (!hasKey()) {
+      alert('Please add an API key in Settings to use AI map generation.');
+      return;
+    }
+
+    if (mapType === 'regional' || mapType === 'local') {
+      if (!selectedLocation) {
+        alert('Please select a location for regional/local maps.');
+        return;
+      }
+    }
+
+    setGeneratingMap(true);
+
+    try {
+      console.log(`Generating ${mapType} map...`);
+
+      const apiKey = hasKey('anthropic') ? keys.anthropic : (hasKey('openai') ? keys.openai : null);
+      const provider = hasKey('anthropic') ? 'anthropic' : 'openai';
+      const openaiKey = hasKey('openai') ? keys.openai : null;
+
+      const mapContext = {
+        campaign,
+        locations,
+        mapType,
+        mapName: mapType === 'world'
+          ? `${campaign.name} World Map`
+          : `${selectedLocation?.name} Map`
+      };
+
+      if (mapType === 'regional' || mapType === 'local') {
+        mapContext.specificLocation = selectedLocation;
+      }
+
+      const mapData = await generateMap(
+        mapContext,
+        apiKey,
+        provider,
+        openaiKey,
+        !!openaiKey // Generate image if we have OpenAI key
+      );
+
+      console.log('Map generated:', mapData);
+
+      // Save map as a file
+      const fileData = {
+        id: Date.now().toString(),
+        name: `${mapData.name}.png`,
+        size: 0, // We don't know the size of the generated image
+        contentType: 'image/png',
+        dataUrl: mapData.imageUrl || '', // Will be empty if no image generated
+        mapDescription: mapData.description,
+        mapType: mapData.type,
+        mapRegions: mapData.regions,
+        mapFeatures: mapData.features,
+        timeCreated: new Date().toISOString(),
+        uploadedBy: 'AI Generator',
+        isGeneratedMap: true
+      };
+
+      // Add file to campaign's files array
+      const campaignRef = doc(db, `campaigns/${campaign.id}`);
+      await updateDoc(campaignRef, {
+        files: arrayUnion(fileData),
+        updatedAt: serverTimestamp()
+      });
+
+      // Also update campaign world map if it's a world map
+      if (mapType === 'world' && mapData.imageUrl) {
+        await updateCampaign({
+          worldMap: mapData.imageUrl,
+          mapDescription: mapData.description,
+          mapRegions: mapData.regions,
+          mapFeatures: mapData.features
+        });
+      }
+
+      await loadFiles();
+      setShowMapGenerator(false);
+      setGeneratingMap(false);
+    } catch (error) {
+      console.error('Error generating map:', error);
+      alert(`Failed to generate map: ${error.message}`);
+      setGeneratingMap(false);
+    }
+  };
+
   const getFileIcon = (contentType) => {
     if (contentType?.startsWith('image/')) {
       return <Image size={24} />;
@@ -164,19 +259,115 @@ export default function FilesView({ campaign, isDM }) {
           <p className="view-subtitle">{files.length} file{files.length !== 1 ? 's' : ''} uploaded</p>
         </div>
         {isDM && (
-          <label className="btn btn-primary upload-btn">
-            <Upload size={20} />
-            Upload File (Max 5MB)
-            <input
-              type="file"
-              accept="image/*,.pdf,.txt,.doc,.docx"
-              onChange={handleFileSelect}
-              disabled={uploading}
-              style={{ display: 'none' }}
-            />
-          </label>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button className="btn btn-secondary" onClick={() => setShowMapGenerator(!showMapGenerator)}>
+              <Wand2 size={20} />
+              {showMapGenerator ? 'Hide Map Generator' : 'Generate Map with AI'}
+            </button>
+            <label className="btn btn-primary upload-btn">
+              <Upload size={20} />
+              Upload File (Max 5MB)
+              <input
+                type="file"
+                accept="image/*,.pdf,.txt,.doc,.docx"
+                onChange={handleFileSelect}
+                disabled={uploading}
+                style={{ display: 'none' }}
+              />
+            </label>
+          </div>
         )}
       </div>
+
+      {/* Map Generator */}
+      {isDM && showMapGenerator && (
+        <div className="map-generator card">
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+            <Wand2 size={20} />
+            AI Map Generator
+          </h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+            Generate maps using AI based on your campaign and locations.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {/* Map Type Selection */}
+            <div className="form-group">
+              <label>Map Type</label>
+              <select
+                value={mapType}
+                onChange={(e) => {
+                  setMapType(e.target.value);
+                  setSelectedLocation(null);
+                }}
+                disabled={generatingMap}
+                className="form-control"
+              >
+                <option value="world">World Map - Overview of entire campaign world</option>
+                <option value="regional">Regional Map - Area around a specific location</option>
+                <option value="local">Local Map - Detailed map of a city/town</option>
+              </select>
+            </div>
+
+            {/* Location Selection for Regional/Local */}
+            {(mapType === 'regional' || mapType === 'local') && (
+              <div className="form-group">
+                <label>Select Location</label>
+                <select
+                  value={selectedLocation?.id || ''}
+                  onChange={(e) => {
+                    const loc = locations.find(l => l.id === e.target.value);
+                    setSelectedLocation(loc);
+                  }}
+                  disabled={generatingMap}
+                  className="form-control"
+                >
+                  <option value="">-- Select a location --</option>
+                  {locations.map(loc => (
+                    <option key={loc.id} value={loc.id}>
+                      {loc.name} ({loc.type})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* API Key Warning */}
+            {!hasKey() && (
+              <div className="alert alert-warning">
+                ⚠️ You need to add an API key in Settings to use map generation.
+              </div>
+            )}
+
+            {/* OpenAI Key Info */}
+            {hasKey() && !hasKey('openai') && (
+              <div className="alert alert-info">
+                ℹ️ Add an OpenAI API key to generate visual map images with DALL-E. Otherwise, only text descriptions will be generated.
+              </div>
+            )}
+
+            {/* Generate Button */}
+            <button
+              className="btn btn-primary"
+              onClick={handleGenerateMap}
+              disabled={generatingMap || !hasKey() || ((mapType === 'regional' || mapType === 'local') && !selectedLocation)}
+              style={{ alignSelf: 'flex-start' }}
+            >
+              {generatingMap ? (
+                <>
+                  <Loader2 size={20} className="spinner" />
+                  Generating Map...
+                </>
+              ) : (
+                <>
+                  <Wand2 size={20} />
+                  Generate {mapType.charAt(0).toUpperCase() + mapType.slice(1)} Map
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
 
       {uploading && (
         <div className="upload-progress card">
@@ -211,7 +402,7 @@ export default function FilesView({ campaign, isDM }) {
       ) : (
         <div className="files-grid">
           {files.map((file) => (
-            <div key={file.id} className="file-card card">
+            <div key={file.id} className={`file-card card ${file.isGeneratedMap ? 'generated-map' : ''}`}>
               <div className="file-preview">
                 {isImage(file.contentType) ? (
                   <img src={file.dataUrl} alt={file.name} />
@@ -222,11 +413,32 @@ export default function FilesView({ campaign, isDM }) {
                 )}
               </div>
               <div className="file-info">
-                <h4 className="file-name">{file.name}</h4>
+                <h4 className="file-name">
+                  {file.name}
+                  {file.isGeneratedMap && (
+                    <span className="badge badge-ai" title="AI Generated">
+                      <Wand2 size={12} />
+                    </span>
+                  )}
+                </h4>
                 <div className="file-meta">
-                  <span className="file-size">{formatFileSize(file.size)}</span>
+                  {file.size > 0 && <span className="file-size">{formatFileSize(file.size)}</span>}
                   <span className="file-uploader">by {file.uploadedBy}</span>
                 </div>
+                {file.mapDescription && (
+                  <p className="map-description" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
+                    {file.mapDescription.length > 100
+                      ? file.mapDescription.substring(0, 100) + '...'
+                      : file.mapDescription}
+                  </p>
+                )}
+                {file.mapType && (
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <span className="tag" style={{ fontSize: '0.75rem' }}>
+                      {file.mapType} map
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="file-actions">
                 {isImage(file.contentType) && (
@@ -238,14 +450,16 @@ export default function FilesView({ campaign, isDM }) {
                     <Eye size={18} />
                   </button>
                 )}
-                <a
-                  href={file.dataUrl}
-                  download={file.name}
-                  className="btn btn-icon"
-                  title="Download"
-                >
-                  <Download size={18} />
-                </a>
+                {file.dataUrl && (
+                  <a
+                    href={file.dataUrl}
+                    download={file.name}
+                    className="btn btn-icon"
+                    title="Download"
+                  >
+                    <Download size={18} />
+                  </a>
+                )}
                 {isDM && (
                   <button
                     className="btn btn-icon btn-danger"
