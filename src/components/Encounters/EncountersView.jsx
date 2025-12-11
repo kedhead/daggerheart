@@ -6,14 +6,12 @@ import Modal from '../Modal';
 import QuickGeneratorModal from '../CampaignBuilder/QuickGeneratorModal';
 import './EncountersView.css';
 
-export default function EncountersView({ campaign, addEncounter, updateEncounter, deleteEncounter, isDM }) {
+export default function EncountersView({ campaign, encounters = [], addEncounter, updateEncounter, deleteEncounter, isDM }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEncounter, setEditingEncounter] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDifficulty, setFilterDifficulty] = useState('all');
   const [quickGenOpen, setQuickGenOpen] = useState(false);
-
-  const encounters = campaign?.encounters || [];
 
   const handleAdd = () => {
     setEditingEncounter(null);

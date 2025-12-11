@@ -6,14 +6,12 @@ import Modal from '../Modal';
 import QuickGeneratorModal from '../CampaignBuilder/QuickGeneratorModal';
 import './NPCsView.css';
 
-export default function NPCsView({ campaign, addNPC, updateNPC, deleteNPC, isDM }) {
+export default function NPCsView({ campaign, npcs = [], addNPC, updateNPC, deleteNPC, isDM }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNPC, setEditingNPC] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRelationship, setFilterRelationship] = useState('all');
   const [quickGenOpen, setQuickGenOpen] = useState(false);
-
-  const npcs = campaign?.npcs || [];
 
   const handleAdd = () => {
     setEditingNPC(null);

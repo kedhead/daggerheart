@@ -6,14 +6,12 @@ import Modal from '../Modal';
 import QuickGeneratorModal from '../CampaignBuilder/QuickGeneratorModal';
 import './LocationsView.css';
 
-export default function LocationsView({ campaign, updateCampaign, addLocation, updateLocation, deleteLocation, isDM }) {
+export default function LocationsView({ campaign, locations = [], updateCampaign, addLocation, updateLocation, deleteLocation, isDM }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [uploadingMap, setUploadingMap] = useState(false);
   const [quickGenOpen, setQuickGenOpen] = useState(false);
-
-  const locations = campaign?.locations || [];
   const worldMap = campaign?.worldMap || null;
 
   const handleAdd = () => {

@@ -181,6 +181,7 @@ function CampaignApp() {
         return (
           <NPCsView
             campaign={campaign}
+            npcs={npcs}
             addNPC={addNPC}
             updateNPC={updateNPC}
             deleteNPC={deleteNPC}
@@ -191,6 +192,7 @@ function CampaignApp() {
         return (
           <TimelineView
             campaign={campaign}
+            events={timelineEvents}
             addEvent={addTimelineEvent}
             updateEvent={updateTimelineEvent}
             deleteEvent={deleteTimelineEvent}
@@ -201,6 +203,7 @@ function CampaignApp() {
         return (
           <LocationsView
             campaign={campaign}
+            locations={locations}
             updateCampaign={updateCampaign}
             addLocation={addLocation}
             updateLocation={updateLocation}
@@ -212,6 +215,7 @@ function CampaignApp() {
         return (
           <EncountersView
             campaign={campaign}
+            encounters={encounters}
             addEncounter={addEncounter}
             updateEncounter={updateEncounter}
             deleteEncounter={deleteEncounter}
