@@ -146,7 +146,7 @@ export function useCampaignBuilder(campaignId, campaignFrameDraft, saveCampaignF
     }
 
     // Move to next step
-    if (currentStep < 13) {
+    if (currentStep < 14) {
       setCurrentStep(currentStep + 1);
     }
   }, [currentStep, completedSteps, data, templateUsed, saveCampaignFrameDraft]);
