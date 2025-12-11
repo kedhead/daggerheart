@@ -96,6 +96,10 @@ export function useFirestoreCampaign(campaignId) {
           ...doc.data()
         }));
         setCharacters(data);
+      },
+      (error) => {
+        console.warn('Characters subscription error (may be due to pending permissions):', error.code);
+        setCharacters([]);
       }
     );
 
@@ -114,6 +118,10 @@ export function useFirestoreCampaign(campaignId) {
           ...doc.data()
         }));
         setLore(data);
+      },
+      (error) => {
+        console.warn('Lore subscription error (may be due to pending permissions):', error.code);
+        setLore([]);
       }
     );
 
@@ -129,13 +137,20 @@ export function useFirestoreCampaign(campaignId) {
       orderBy('number', 'desc')
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setSessions(data);
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setSessions(data);
+      },
+      (error) => {
+        console.warn('Sessions subscription error (may be due to pending permissions):', error.code);
+        setSessions([]);
+      }
+    );
 
     return unsubscribe;
   }, [basePath]);
@@ -152,6 +167,10 @@ export function useFirestoreCampaign(campaignId) {
           ...doc.data()
         }));
         setNpcs(data);
+      },
+      (error) => {
+        console.warn('NPCs subscription error (may be due to pending permissions):', error.code);
+        setNpcs([]);
       }
     );
 
@@ -170,6 +189,10 @@ export function useFirestoreCampaign(campaignId) {
           ...doc.data()
         }));
         setTimelineEvents(data);
+      },
+      (error) => {
+        console.warn('Timeline subscription error (may be due to pending permissions):', error.code);
+        setTimelineEvents([]);
       }
     );
 
@@ -188,6 +211,10 @@ export function useFirestoreCampaign(campaignId) {
           ...doc.data()
         }));
         setLocations(data);
+      },
+      (error) => {
+        console.warn('Locations subscription error (may be due to pending permissions):', error.code);
+        setLocations([]);
       }
     );
 
@@ -206,6 +233,10 @@ export function useFirestoreCampaign(campaignId) {
           ...doc.data()
         }));
         setEncounters(data);
+      },
+      (error) => {
+        console.warn('Encounters subscription error (may be due to pending permissions):', error.code);
+        setEncounters([]);
       }
     );
 
@@ -224,6 +255,10 @@ export function useFirestoreCampaign(campaignId) {
           ...doc.data()
         }));
         setNotes(data);
+      },
+      (error) => {
+        console.warn('Notes subscription error (may be due to pending permissions):', error.code);
+        setNotes([]);
       }
     );
 
@@ -242,6 +277,10 @@ export function useFirestoreCampaign(campaignId) {
         } else {
           setCampaignFrame(null);
         }
+      },
+      (error) => {
+        console.warn('Campaign Frame subscription error (may be due to pending permissions):', error.code);
+        setCampaignFrame(null);
       }
     );
 
@@ -260,6 +299,10 @@ export function useFirestoreCampaign(campaignId) {
         } else {
           setCampaignFrameDraft(null);
         }
+      },
+      (error) => {
+        console.warn('Campaign Frame Draft subscription error (may be due to pending permissions):', error.code);
+        setCampaignFrameDraft(null);
       }
     );
 

@@ -11,24 +11,27 @@ import { useAPIKey } from '../../../../hooks/useAPIKey';
 export default function PitchStep({ value, onChange, campaign, userId, hasAPIKey }) {
   const [showGenerator, setShowGenerator] = useState(false);
   const [mode, setMode] = useState('template');
-  const { generating, result, error, generatedPrompt, generateFromTemplate, generatePrompt, parsePastedResponse, generateWithAPI, clearGeneration } = useAIGeneration();
+  const { generating, result, error, generatedPrompt, generateFromTemplate, generatePrompt, parsePastedResponse, generateWithAPI, generateCampaignFrameContent, clearGeneration } = useAIGeneration();
   const { keys, hasKey } = useAPIKey(userId);
 
   const handleGenerate = async () => {
     try {
       const context = {
-        campaign: campaign?.name,
-        campaignDescription: campaign?.description
+        campaign: campaign?.name || campaign,
+        requirements: {
+          genre: campaign?.genre,
+          inspiration: campaign?.inspiration
+        }
       };
 
       if (mode === 'template') {
-        const generated = await generateFromTemplate('pitch', context);
+        const generated = await generateCampaignFrameContent('pitch', context, 'template');
         onChange(generated);
         setShowGenerator(false);
       } else if (mode === 'prompt') {
-        generatePrompt('pitch', context);
+        generatePrompt('campaignFrame', { step: 'pitch', ...context });
       } else if (mode === 'api') {
-        const generated = await generateWithAPI('pitch', context, hasKey('anthropic') ? keys.anthropic : keys.openai, keys.provider);
+        const generated = await generateCampaignFrameContent('pitch', context, 'api', hasKey('anthropic') ? keys.anthropic : keys.openai, keys.provider);
         onChange(generated);
         setShowGenerator(false);
       }
