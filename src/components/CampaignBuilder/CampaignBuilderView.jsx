@@ -13,7 +13,12 @@ export default function CampaignBuilderView({
   saveCampaignFrameDraft,
   completeCampaignFrame,
   deleteCampaignFrameDraft,
-  onBack
+  onBack,
+  addNPC,
+  addLocation,
+  addLore,
+  addEncounter,
+  addTimelineEvent
 }) {
   const [wizardStarted, setWizardStarted] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -180,6 +185,11 @@ export default function CampaignBuilderView({
         campaignFrame={campaignFrame}
         wizardState={wizardState}
         onComplete={handleComplete}
+        addNPC={addNPC}
+        addLocation={addLocation}
+        addLore={addLore}
+        addEncounter={addEncounter}
+        addTimelineEvent={addTimelineEvent}
       />
     );
   }

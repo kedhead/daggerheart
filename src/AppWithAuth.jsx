@@ -240,6 +240,11 @@ function CampaignApp() {
             completeCampaignFrame={completeCampaignFrame}
             deleteCampaignFrameDraft={deleteCampaignFrameDraft}
             onBack={() => setCurrentView('dashboard')}
+            addNPC={addNPC}
+            addLocation={addLocation}
+            addLore={addLore}
+            addEncounter={addEncounter}
+            addTimelineEvent={addTimelineEvent}
           />
         );
       case 'apiSettings':

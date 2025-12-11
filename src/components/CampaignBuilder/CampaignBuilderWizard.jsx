@@ -16,7 +16,8 @@ import IncitingIncidentStep from './wizard/steps/IncitingIncidentStep';
 import CampaignMechanicsStep from './wizard/steps/CampaignMechanicsStep';
 import SessionZeroStep from './wizard/steps/SessionZeroStep';
 import { useAPIKey } from '../../hooks/useAPIKey';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Loader2, Sparkles } from 'lucide-react';
+import { generateCampaignContent } from '../../services/campaignGenerator';
 import './CampaignBuilder.css';
 
 export default function CampaignBuilderWizard({
@@ -24,9 +25,14 @@ export default function CampaignBuilderWizard({
   campaign,
   campaignFrame,
   wizardState,
-  onComplete
+  onComplete,
+  addNPC,
+  addLocation,
+  addLore,
+  addEncounter,
+  addTimelineEvent
 }) {
-  const { hasKey } = useAPIKey(userId);
+  const { hasKey, keys } = useAPIKey(userId);
   const {
     currentStep,
     completedSteps,
@@ -42,6 +48,9 @@ export default function CampaignBuilderWizard({
   } = wizardState;
 
   const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState('');
+  const [generationComplete, setGenerationComplete] = useState(false);
 
   const handleSaveDraft = async () => {
     setSaving(true);
@@ -55,11 +64,99 @@ export default function CampaignBuilderWizard({
   };
 
   const handleComplete = async () => {
-    await complete();
-    if (onComplete) {
-      onComplete();
+    setGenerating(true);
+
+    try {
+      // Save the campaign frame first
+      setGenerationProgress('Saving campaign frame...');
+      await complete();
+
+      // Generate campaign content
+      setGenerationProgress('Generating NPCs...');
+      const apiKey = hasKey('anthropic') ? keys.anthropic : (hasKey('openai') ? keys.openai : null);
+      const provider = hasKey('anthropic') ? 'anthropic' : 'openai';
+
+      const generatedContent = await generateCampaignContent(data, campaign, apiKey, provider);
+
+      // Save NPCs
+      setGenerationProgress(`Saving ${generatedContent.npcs.length} NPCs...`);
+      for (const npc of generatedContent.npcs) {
+        await addNPC(npc);
+      }
+
+      // Save Locations
+      setGenerationProgress(`Saving ${generatedContent.locations.length} locations...`);
+      for (const location of generatedContent.locations) {
+        await addLocation(location);
+      }
+
+      // Save Lore
+      setGenerationProgress(`Saving ${generatedContent.lore.length} lore entries...`);
+      for (const lore of generatedContent.lore) {
+        await addLore(lore);
+      }
+
+      // Save Encounters
+      setGenerationProgress(`Saving ${generatedContent.encounters.length} encounters...`);
+      for (const encounter of generatedContent.encounters) {
+        await addEncounter(encounter);
+      }
+
+      // Save Timeline Events
+      setGenerationProgress(`Saving ${generatedContent.timelineEvents.length} timeline events...`);
+      for (const event of generatedContent.timelineEvents) {
+        await addTimelineEvent(event);
+      }
+
+      setGenerationProgress('Complete!');
+      setGenerationComplete(true);
+
+      // Give user a moment to see the success message
+      setTimeout(() => {
+        setGenerating(false);
+        if (onComplete) {
+          onComplete();
+        }
+      }, 2000);
+    } catch (error) {
+      console.error('Error generating campaign content:', error);
+      setGenerationProgress(`Error: ${error.message}`);
+      setTimeout(() => {
+        setGenerating(false);
+        if (onComplete) {
+          onComplete();
+        }
+      }, 3000);
     }
   };
+
+  // Show generating screen
+  if (generating) {
+    return (
+      <div className="campaign-builder-view" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+        {!generationComplete ? (
+          <>
+            <Loader2 size={64} style={{ color: 'var(--hope-color)', margin: '0 auto 1rem', animation: 'spin 1s linear infinite' }} />
+            <h2>Generating Your Campaign...</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '1.125rem' }}>
+              {generationProgress}
+            </p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+              This may take a few moments. We're creating NPCs, locations, lore, encounters, and timeline events based on your campaign frame.
+            </p>
+          </>
+        ) : (
+          <>
+            <Sparkles size={64} style={{ color: 'var(--hope-color)', margin: '0 auto 1rem' }} />
+            <h2>Campaign Generated!</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '1.125rem' }}>
+              Your campaign is ready to play! Check out the NPCs, Locations, Lore, and other sections to see your generated content.
+            </p>
+          </>
+        )}
+      </div>
+    );
+  }
 
   if (isComplete) {
     return (
