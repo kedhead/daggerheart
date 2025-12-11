@@ -109,6 +109,27 @@ export const responseParser = {
     return responseText.trim();
   },
 
+  /**
+   * Parse Lore response
+   * @param {string} responseText - AI response text
+   * @returns {object} Parsed lore data
+   */
+  parseLore(responseText) {
+    try {
+      const jsonMatch = responseText.match(/```json\s*\n([\s\S]*?)\n```/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[1]);
+        return this._validateLoreData(parsed);
+      }
+
+      const parsed = JSON.parse(responseText);
+      return this._validateLoreData(parsed);
+    } catch (error) {
+      console.log('JSON parsing failed for lore, trying text extraction');
+      return this._parseLoreFromText(responseText);
+    }
+  },
+
   // Validation methods
 
   _validateNPCData(data) {
@@ -149,6 +170,21 @@ export const responseParser = {
       rewards: data.rewards || '',
       freshCutGrassLink: ''
     };
+  },
+
+  _validateLoreData(data) {
+    return {
+      title: data.title || 'Untitled Lore',
+      category: this._validateLoreCategory(data.category),
+      content: data.content || '',
+      tags: Array.isArray(data.tags) ? data.tags : []
+    };
+  },
+
+  _validateLoreCategory(category) {
+    const valid = ['history', 'legend', 'faction', 'culture', 'religion', 'magic', 'geography', 'other'];
+    const normalized = (category || '').toLowerCase();
+    return valid.includes(normalized) ? normalized : 'other';
   },
 
   _validateRelationship(relationship) {
@@ -238,6 +274,24 @@ export const responseParser = {
     };
   },
 
+  _parseLoreFromText(text) {
+    const extractField = (fieldNames) => {
+      for (const fieldName of fieldNames) {
+        const pattern = new RegExp(`${fieldName}:\\s*(.+?)(?:\\n|$)`, 'i');
+        const match = text.match(pattern);
+        if (match) return match[1].trim();
+      }
+      return '';
+    };
+
+    return {
+      title: extractField(['title', 'name']) || 'Untitled Lore',
+      category: this._validateLoreCategory(extractField(['category', 'type'])),
+      content: extractField(['content', 'description', 'text']) || text.substring(0, 500),
+      tags: extractField(['tags']).split(',').map(t => t.trim()).filter(Boolean)
+    };
+  },
+
   /**
    * Main parse function - routes to appropriate parser
    * @param {string} type - Type of content
@@ -256,6 +310,8 @@ export const responseParser = {
         return this.parseLocation(responseText);
       case 'encounter':
         return this.parseEncounter(responseText);
+      case 'lore':
+        return this.parseLore(responseText);
       case 'array':
         return this.parseArray(responseText);
       case 'text':

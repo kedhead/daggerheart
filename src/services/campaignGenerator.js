@@ -39,45 +39,78 @@ export async function generateCampaignContent(campaignFrame, campaign, apiKey = 
     // Generate NPCs (5 starter NPCs)
     console.log('Generating NPCs...');
     for (let i = 0; i < 5; i++) {
-      const npc = useAI
-        ? await generateNPCWithAI(context, apiKey, provider)
-        : templateService.generateRandomNPC(context);
-      generated.npcs.push(npc);
-      context.existingNPCs.push(npc);
+      try {
+        const npc = useAI
+          ? await generateNPCWithAI(context, apiKey, provider)
+          : templateService.generateRandomNPC(context);
+        console.log('Generated NPC:', npc);
+        generated.npcs.push(npc);
+        context.existingNPCs.push(npc);
+      } catch (err) {
+        console.error(`Failed to generate NPC ${i + 1}:`, err);
+        // Use template as fallback
+        const npc = templateService.generateRandomNPC(context);
+        generated.npcs.push(npc);
+        context.existingNPCs.push(npc);
+      }
     }
 
     // Generate Locations (4 starter locations)
     console.log('Generating Locations...');
     for (let i = 0; i < 4; i++) {
-      const location = useAI
-        ? await generateLocationWithAI(context, apiKey, provider)
-        : templateService.generateRandomLocation(context);
-      generated.locations.push(location);
-      context.existingLocations.push(location);
+      try {
+        const location = useAI
+          ? await generateLocationWithAI(context, apiKey, provider)
+          : templateService.generateRandomLocation(context);
+        console.log('Generated Location:', location);
+        generated.locations.push(location);
+        context.existingLocations.push(location);
+      } catch (err) {
+        console.error(`Failed to generate Location ${i + 1}:`, err);
+        const location = templateService.generateRandomLocation(context);
+        generated.locations.push(location);
+        context.existingLocations.push(location);
+      }
     }
 
     // Generate Lore Entries (3 starter lore entries)
     console.log('Generating Lore...');
     for (let i = 0; i < 3; i++) {
-      const lore = useAI
-        ? await generateLoreWithAI(context, apiKey, provider, i)
-        : generateLoreFromTemplate(campaignFrame, i);
-      generated.lore.push(lore);
+      try {
+        const lore = useAI
+          ? await generateLoreWithAI(context, apiKey, provider, i)
+          : generateLoreFromTemplate(campaignFrame, i);
+        console.log('Generated Lore:', lore);
+        generated.lore.push(lore);
+      } catch (err) {
+        console.error(`Failed to generate Lore ${i + 1}:`, err);
+        const lore = generateLoreFromTemplate(campaignFrame, i);
+        generated.lore.push(lore);
+      }
     }
 
     // Generate Encounters (2 starter encounters)
     console.log('Generating Encounters...');
     for (let i = 0; i < 2; i++) {
-      const encounter = useAI
-        ? await generateEncounterWithAI(context, apiKey, provider, i)
-        : templateService.generateRandomEncounter({ partyLevel: 1, partySize: 4 });
-      generated.encounters.push(encounter);
+      try {
+        const encounter = useAI
+          ? await generateEncounterWithAI(context, apiKey, provider, i)
+          : templateService.generateRandomEncounter({ partyLevel: 1, partySize: 4 });
+        console.log('Generated Encounter:', encounter);
+        generated.encounters.push(encounter);
+      } catch (err) {
+        console.error(`Failed to generate Encounter ${i + 1}:`, err);
+        const encounter = templateService.generateRandomEncounter({ partyLevel: 1, partySize: 4 });
+        generated.encounters.push(encounter);
+      }
     }
 
     // Generate Timeline Events (3 starter timeline events)
     console.log('Generating Timeline Events...');
     generated.timelineEvents = generateTimelineEvents(campaignFrame);
+    console.log('Generated Timeline Events:', generated.timelineEvents);
 
+    console.log('Final generated content:', generated);
     return generated;
   } catch (error) {
     console.error('Error generating campaign content:', error);

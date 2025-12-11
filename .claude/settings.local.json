@@ -15,7 +15,8 @@
       "WebFetch(domain:www.scribd.com)",
       "Bash(dir \"K:\\AI-Projects\\Daggerheart\\src\" /s /b)",
       "Bash(npm run dev)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []
